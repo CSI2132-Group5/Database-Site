@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&family=Work+Sans:wght@300&display=swap" rel="stylesheet">
+
+		<link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+		<link rel="stylesheet" href="{{url_for('static',filename='public/styles.css')}}">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+		<title>CSI 2132 ~ Group 5</title>
+	</head>
+	<body>
+		<!-- Image and text -->
+		<div class="grid place-content-center md:flex md:justify-start items-center w-full border-b-2 shadow-md md:pl-20 md:pr-20 lg:pl-30 lg:pr-30 pt-1 md:pt-3 pb-1 md:pb-3">
+			<div class="flex items-center">
+				<a class="md:p-3 text-xl font-bold md:font-medium text-center" href="#">CSI 2132 ~ Group 5</a>
+			</div>
+		</div>
+
+		<!-- SPACE OUT THE SECTION  -->
+	
+		<footer class="absolute bottom-0 w-full bg-gray-50 pt-5">
+			<div class="flex justify-center mt-5 pt-1 pb-1 bg-charcoal-700 text-gray-50">© 2019-2021 Copyright ~</div>
+		</footer>
+
+		<script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
+		<script src="{{ url_for('static', filename='javascript/index.js') }}"></script>
+	</body>
+</html>

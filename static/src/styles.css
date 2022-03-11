@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+@layer utilities {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+  
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .hide-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+}
+
+.card {
+    @apply rounded overflow-hidden shadow-sm relative bg-gray-100 w-96;
+}
+
+.card-badge {
+    @apply text-xs uppercase font-bold rounded-full p-2 absolute top-0 ml-2 mt-2;
+}
+
+.card-pricing {
+    @apply grid grid-cols-1 justify-items-center w-52 h-60 rounded-md shadow-md bg-gray-50 p-3;
+}
+
+.input-box-icon {
+    @apply pl-2 pr-2 pt-0.5 pb-0.5 rounded-l-lg bg-gray-200;
+}
+
+.input-box {
+    @apply w-52 pl-1 border-2 rounded-sm border-gray-200 outline-none;
+}
+
+.admin-option-button {
+    @apply pt-1 pb-1 pl-2 pr-2 rounded-sm shadow-md border-2 border-gray-100 bg-gray-50 font-thin;
+}
