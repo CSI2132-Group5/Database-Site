@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build-css": "tailwindcss build src/styles.css -o public/styles.css"
+    "build-css": "tailwindcss build src/styles.css -o public/styles.css",
+    "start": "node index.js"
   },
   "devDependencies": {
     "autoprefixer": "^10.3.7",
