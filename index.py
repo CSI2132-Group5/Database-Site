@@ -22,7 +22,7 @@ app.config.from_pyfile('config.py')
 
 # settup the login authentication
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'login'
 login_manager.init_app(app)
 
 @login_manager.user_loader
@@ -67,6 +67,11 @@ def logout():
 @login_required
 def dashboard():
     return render_template("dashboard.html")
+
+@app.route('/admin/createuser')
+@login_required
+def createuser():
+    return render_template("createuser.html")
 
 if __name__ == "__main__":
     app.run()

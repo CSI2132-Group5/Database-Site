@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+        <title>{{ title }}</title>
+    {% else %}
+        <title>Dentist Office</title>
+    {% endif %}
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+    
+    <link rel="stylesheet" href="{{url_for('static',filename='public/styles.css')}}">
+</head>
+<body class="overflow-y-hidden">
+    <div class="flex">
+        <div class="box-border h-screen w-1/5 p-5 overflow-y-scroll bg-charcoal-700 text-gray-50"> <!-- right control bar -->
+            <div class="mb-5">
+                <div class="flex font-semibold"> <!-- branding -->
+                    <box-icon name='plus-medical' color="#fff" class="mr-2"></box-icon>
+                    <span>Dentist</span>
+                    <span>Office</span>
+                </div>
+                <div class="flex items-center mt-1 text-sm text-charcoal-500">
+                    <span class="mr-0.5">Powered by</span>
+                    <box-icon type='logo' name='python' color="#2B2B2B"></box-icon>
+                    <box-icon type='logo' name='tailwind-css' color="#2B2B2B"></box-icon>
+                </div>
+            </div>
+            <div> <!-- dashboard specific options -->
+                <h5 class="text-white border-b-2 mb-2 font-medium border-charcoal-500">Admin</h5>
+                <ul class="text-gray-50 font-thin">
+                    <li class="flex items-center">
+                        <a href="/admin/createuser">Create User</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="absolute bottom-0 left-0 p-5"> <!-- owned server shortcuts -->
+                <a href="/dashboard/profile&username={{ current_user.username }}&id={{ current_user.id }}">
+                    <div class="text-sm font-light text-white"> <!-- user info -->
+                        <span>{{ current_user.first_name }}</span>
+                        <span>{{ current_user.middle_name }}</span>
+                        <span>{{ current_user.last_name }}</span>
+                        <div class="text-charcoal-200">{{ current_user.email_address }}</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="w-full"> <!-- right panel -->
+            <div class="flex items-center w-full h-20 shadow-md"> <!-- state of panel bar -->
+                <div class="absolute ml-5"> <!-- page information bar -->
+                    <div> <!-- page information text wrapper -->
+                        <h5 class="text-lg font-medium">{% block page_title %}{% endblock %}</h5>
+                        <h3 class="text-sm font-thin">{% block page_description %}{% endblock %}</h3>
+                    </div>
+                </div>
+                <div class="absolute right-0 transform -translate-x-20"> <!-- user profile information -->
+                    <div class="flex items-center"> <!-- profile card -->
+                        <a href="/logout"> <!-- logout button -->
+                            <box-icon class="m-3" name='log-in' type='solid' color='#202020'></box-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/boxicons@2.0.9/dist/boxicons.js"></script>
+</body>
+</html>
