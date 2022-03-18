@@ -50,6 +50,7 @@ def login():
         user = authenticate_user(username=username, password=seed_phrase)
         # if we see a None value, the username is wrong
         if user is None:
+            print("User is None type")
             return render_template('login.html', wrong_password_or_user=True)
         else:
             # store the credentials and redirect to the dashboard
