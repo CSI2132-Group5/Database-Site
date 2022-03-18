@@ -8,127 +8,174 @@
 {% block content %}
 <div class="m-4">
     {% if success == True %}
-    <div id="name-warning" class="error-box hidden"> <!-- login error box -->
+    <div id="name-warning" class="success-box hidden"> <!-- login error box -->
         <box-icon name='x' color='#fdfbfb' ></box-icon>
-        <h3 class="ml-0.5">A name field is empty</h3>
+        <h3 class="ml-0.5">Success! A user for {{ previous_form.get('first-name') }} {{ previous_form.get('last-name') }} has been added to the database.</h3>
     </div>
     {% endif %}
     <form method="post">
-        <div>
-            {% if invalid_name == True %}
-                <div id="name-warning" class="error-box hidden"> <!-- login error box -->
-                    <box-icon name='x' color='#fdfbfb' ></box-icon>
-                    <h3 class="ml-0.5">A name field is empty</h3>
-                </div>
-            {% endif %}
-            <div class="flex">
-                <div class="m-1">
-                    <h5 class="font-light">First Name</h5>
-                    <input name="first-name" type="text" class="input-box">
-                </div>
-                <div class="m-1">
-                    <h5 class="font-light">Middle Name</h5>
-                    <input name="middle-name" type="text" class="input-box">
-                </div>
-                <div class="m-1">
-                    <h5 class="font-light">Last Name</h5>
-                    <input name="last-name" type="text" class="input-box">
-                </div>
-            </div>
-        </div>
-        <div class="mt-5">
-            {% if invalid_age == True %}
-                <div id="age-warning" class="error-box hidden"> <!-- login error box -->
-                    <box-icon name='x' color='#fdfbfb' ></box-icon>
-                    <h3 class="ml-0.5">Age is an illegal value</h3>
-                </div>
-            {% endif %}
-            <div class="flex m-1">
-                <div class="m-1">
-                    <h5 class="font-light">Gender</h5>
-                    <select name="gender" id="gender" class="input-box">
-                        <option value="0">Male</option>
-                        <option value="1">Female</option>
-                        <option value="2">Other</option>
-                    </select>
-                </div>
-                <div class="m-1">
-                    <h5 class="font-light">Age</h5>
-                    <input name="age" type="number" class="input-box">
-                </div>
-            </div>
-        </div>
-        <div class="mt-5">
-            {% if invalid_address == True %}
-                <div id="address-warning" class="error-box hidden"> <!-- login error box -->
-                    <box-icon name='x' color='#fdfbfb' ></box-icon>
-                    <h3 class="ml-0.5">One address field is empty</h3>
-                </div>
-            {% endif %}
-            <div class="flex">
-                <div class="m-1">
-                    <h5 class="font-light">Address</h5>
-                    <input name="address" type="text" class="input-box">
-                    
-                </div>
-                <div class="m-1">
-                    <h5 class="font-light">Street Name</h5>
-                    <input name="street-name" type="text" class="input-box">
-                </div>
-                <div class="m-1">
-                    <h5 class="font-light">House Number</h5>
-                    <input name="house-number" type="text" class="input-box">
-                </div>
-            </div>
-        </div>
-        <div class="flex mt-5">
-            <div class="m-1">
-                <h5 class="font-light">City</h5>
-                <input name="city" type="text" class="input-box">
-            </div>
-            <div class="m-1">
-                <h5 class="font-light">Province</h5>
-                <input name="province" type="text" class="input-box">
-            </div>
-        </div>
-        <div class="flex mt-5">
-            <div class="m-1">
-                <h5 class="font-light">Date of Birth</h5>
-                <input type="date" id="start" name="date-birth" value="2018-07-22" min="2018-01-01" max="2018-12-31">
-            </div>
-            <div class="m-1">
-                {% if invalid_password == True %}
-                    <div id="password-warning" class="error-box hidden"> <!-- login error box -->
-                        <box-icon name='x' color='#fdfbfb' ></box-icon>
-                        <h3 class="ml-0.5">Password invalid</h3>
+        <div class="flex">
+            <div> <!-- left side of form -->
+                <div>
+                    {% if invalid_name == True %}
+                        <div id="name-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">A name field is empty</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex">
+                        <div class="m-1">
+                            <h5 class="font-light">First Name</h5>
+                            <input name="first-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('first-name') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Middle Name</h5>
+                            <input name="middle-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('middle-name') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Last Name</h5>
+                            <input name="last-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('last-name') }}" {% endif %}>
+                        </div>
                     </div>
-                {% endif %}
-                <h5 class="font-light">Password</h5>
-                <input name="password" type="text" class="input-box">
-            </div>
-            <div class="m-1">
-                {% if invalid_ssn == True %}
-                    <div id="ssn-warning" class="error-box hidden"> <!-- login error box -->
-                        <box-icon name='x' color='#fdfbfb' ></box-icon>
-                        <h3 class="ml-0.5">SSN is invalid</h3>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_age == True %}
+                        <div id="age-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Age is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Gender</h5>
+                            <select name="gender" id="gender" class="input-box" {% if previous_form %} value="{{ previous_form.get('gender') }}" {% endif %}>
+                                <option value="0">Male</option>
+                                <option value="1">Female</option>
+                                <option value="2">Other</option>
+                            </select>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Age</h5>
+                            <input name="age" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('age') }}" {% endif %}>
+                        </div>
                     </div>
-                {% endif %}
-                <h5 class="font-light">SSN</h5>
-                <input name="ssn" type="text" class="input-box">
-            </div>
-            <div class="m-1">
-                {% if invalid_phone == True %}
-                    <div id="phone-warning" class="error-box hidden"> <!-- login error box -->
-                        <box-icon name='x' color='#fdfbfb' ></box-icon>
-                        <h3 class="ml-0.5">Phone is invalid</h3>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_address == True %}
+                        <div id="address-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">One address field is empty</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex">
+                        <div class="m-1">
+                            <h5 class="font-light">Address</h5>
+                            <input name="address" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('address') }}" {% endif %}>
+                            
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Street Name</h5>
+                            <input name="street-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('street-name') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">House Number</h5>
+                            <input name="house-number" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('house-number') }}" {% endif %}>
+                        </div>
                     </div>
-                {% endif %}
-                <h5 class="font-light">Phone Number</h5>
-                <input name="phone-number" type="text" class="input-box">
-            </div> 
+                </div>
+                <div class="flex mt-5">
+                    <div class="m-1">
+                        <h5 class="font-light">City</h5>
+                        <input name="city" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('city') }}" {% endif %}>
+                    </div>
+                    <div class="m-1">
+                        <h5 class="font-light">Province</h5>
+                        <input name="province" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('province') }}" {% endif %}>
+                    </div>
+                </div>
+                <div class="flex mt-5">
+                    <div class="m-1">
+                        <h5 class="font-light">Date of Birth</h5>
+                        <input type="date" id="start" name="date-birth" min="1900-01-01" max="2010-01-01" {% if previous_form %} value="{{ previous_form.get('date-birth') }}" {% else %} value="2010-01-01"  {% endif %}>
+                    </div>
+                    <div class="m-1">
+                        {% if invalid_password == True %}
+                            <div id="password-warning" class="error-box hidden"> <!-- login error box -->
+                                <box-icon name='x' color='#fdfbfb' ></box-icon>
+                                <h3 class="ml-0.5">Password invalid</h3>
+                            </div>
+                        {% endif %}
+                        <h5 class="font-light">Password</h5>
+                        <input name="password" type="text" class="input-box">
+                    </div>
+                    <div class="m-1">
+                        {% if invalid_ssn == True %}
+                            <div id="ssn-warning" class="error-box hidden"> <!-- login error box -->
+                                <box-icon name='x' color='#fdfbfb' ></box-icon>
+                                <h3 class="ml-0.5">SSN is invalid</h3>
+                            </div>
+                        {% endif %}
+                        <h5 class="font-light">SSN</h5>
+                        <input name="ssn" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('ssn') }}" {% endif %}>
+                    </div>
+                </div>
+            </div>
+            <div class="ml-5 pl-10 border-l-2 overflow-y-scroll border-gray-200"> <!-- right side of form -->
+                <div class="m-1">
+                    {% if invalid_age == True %}
+                        <div id="age-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Age is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                    <h5 class="font-light">Email</h5>
+                    <input name="email" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('email') }}" {% endif %}>
+                </div>
+                <div class="m-1 mt-5">
+                    {% if invalid_phone == True %}
+                        <div id="phone-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Phone is invalid</h3>
+                        </div>
+                    {% endif %}
+                    <h5 class="font-light">Phone Number</h5>
+                    <input name="phone-number" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('phone-number') }}" {% endif %}>
+                </div> 
+                <div class="m-1 mt-9">
+                    {% if invalid_role == True %}
+                        <div id="phone-warning" class="error-box hidden"> <!-- invalid role box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Invalid User Combination or Missing Data!</h3>
+                        </div>
+                    {% endif %}
+                    <h5 class="font-light mb-2">User Permissions</h5>
+                    <input type="checkbox" id="is-patient" name="is-patient" value="1">
+                    <label for="is-patient">Patient</label><br>
+                    <input type="checkbox" id="is-dentist" name="is-dentist" value="1">
+                    <label for="is-dentist">Dentist</label><br>
+                    <input type="checkbox" id="is-admin" name="is-admin" value="1">
+                    <label for="is-admin">Admin</label><br>
+                    <input type="checkbox" id="is-manager" name="is-manager" value="1">
+                    <label for="is-manager">Branch Manager</label><br>
+                </div>
+                <div id="patient-data" class="m-1 hidden"> <!-- Patient Specific Requirements -->
+                    <h5 class="font-light">Insurance Company</h5>
+                    <input name="insurance" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('insurance') }}" {% endif %}>
+                </div>
+                <div id="employee-data" class="m-1 hidden"> <!-- Data that can apply to any employee-->
+                    <h5 class="font-light">Works At</h5> <!-- also seen as "manages" -->
+                    <input name="works-at" type="number" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('works-at') }}" {% endif %}>
+                </div>
+                <div id="dentist-data" class="m-1 hidden"> <!-- Dentist Specific Requirements -->
+                    <h5 class="font-light">Specialty</h5>
+                    <input name="specialty" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('specialty') }}" {% endif %}>
+                </div>
+            </div>
         </div>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <input id="login-submit" type="submit" class="mt-5 pl-5 pr-5 pt-1 pb-1 rounded-sm bg-charcoal-700 hover:bg-purple-600 text-gray-50 transition duration-500 ease-in-out">
+        <input id="login-submit" type="submit" class="mt-10 pl-5 pr-5 pt-1 pb-1 rounded-sm bg-charcoal-700 hover:bg-purple-600 text-gray-50 transition duration-500 ease-in-out">
     </form>
+
+    <script src="{{ url_for('static', filename='javascript/createuser.js') }}"></script>
 </div>
 {% endblock %}

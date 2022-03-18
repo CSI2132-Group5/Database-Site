@@ -87,7 +87,7 @@ def create_user(user: models.User) -> bool:
         print("[ERROR] Failed to insert new user into the database.")
         print(traceback.format_exc())
         return False
-        
+    
 if __name__ == "__main__":
     user = models.User(
         ssn = 1234, 

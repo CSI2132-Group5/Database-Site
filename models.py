@@ -74,3 +74,108 @@ class User(UserMixin):
             row[15],
             datetime.strptime(row[16], "%Y-%m-%d") if row[16] != None else None
         )
+        
+@dataclass
+class Employee:
+    user_ssn:int  # primary key
+    role:str
+    type:str
+    salary:int
+    shift_start:int
+    shift_end:int
+    
+    def to_tuple(self):
+        return (
+            self.role,
+            self.type,
+            self.salary,
+            self.shift_start,
+            self.shift_end,
+            self.user_ssn
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return Admin(
+            int(row[5]),    # user_ssn
+            row[0],         # role
+            row[1],         # type 
+            int(row[2]),    # salary
+            int(row[3]),    # shift_start      
+            int(row[4])     # shift_end
+        )
+
+@dataclass
+class Patient:
+    user_ssn:int  # primary key
+    insurance_company:str
+    
+    def to_tuple(self):
+        return (
+            self.user_ssn,
+            self.insurance_company
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return Admin(
+            int(row[0]),    # user_ssn
+            row[1]          # insurance_company
+        )
+
+@dataclass
+class Admin:
+    user_ssn:int  # primary key
+    works_at:int
+    
+    def to_tuple(self):
+        return (
+            self.user_ssn,
+            self.works_at
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return Admin(
+            int(row[0]),
+            int(row[1])
+        )
+        
+@dataclass
+class Dentist:
+    user_ssn:int  # primary key
+    specialty:str
+    works_at:int
+    
+    def to_tuple(self):
+        return (
+            self.specialty,
+            self.user_ssn,
+            self.works_at
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return Admin(
+            row[1],         # specialty
+            int(row[0]),    # user ssn
+            int(row[2])     # works at
+        )
+        
+@dataclass
+class BranchManager:
+    user_ssn:int  # primary key
+    manages:int
+    
+    def to_tuple(self):
+        return (
+            self.manages,
+            self.user_ssn
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return Admin(
+            int(row[1]),
+            int(row[0])
+        )

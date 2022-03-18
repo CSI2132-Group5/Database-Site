@@ -84,6 +84,9 @@ def create_user_page():
         last_name = request.form.get("last-name")
         # ensure none of the first/middle/last name entries are blank
         if (first_name == "") or (middle_name == "") or (last_name == ""):
+            print(first_name)
+            print(middle_name)
+            print(last_name)
             invalid_name = True
             
         invalid_age = False
@@ -92,10 +95,13 @@ def create_user_page():
         if (gender < 0) or (gender > 2):
             invalid_age = True
         # the date of birth is sent via HTTP in the format YYYY-MM-DD, we need to convert to datetime
-        date_of_birth = datetime.strptime(request.form.get("date-birth"), "%Y-%m-%d")
+        try:
+            date_of_birth = datetime.strptime(request.form.get("date-birth"), "%Y-%m-%d")
+        except ValueError as ve:
+            date_of_birth = None
         # age can be sent as '', so if that is being sent to use attempting to convert this to an int
         # right away will create a str->int type conversion error (validate this first)
-        if (request.form.get("age") != ""):
+        if (date_of_birth != None) and (request.form.get("age") != ""):
             age = int(request.form.get("age"))
             # we want to perform integer devision of the days elapsed (by 365) to determine whether the
             # number of elapsed years since present matches the age given/entered by/for the client
@@ -110,7 +116,7 @@ def create_user_page():
         address = request.form.get("address")
         street_name = request.form.get("street-name")
         # verify that the address and street-name are not empty strings
-        if (address != "") or (street_name == ""):
+        if (address == "") or (street_name == ""):
             invalid_address = True
         # house # can be sent as '', so if that is being sent to use attempting to convert this to an int
         # right away will create a str->int type conversion error (validate this first)
@@ -126,7 +132,7 @@ def create_user_page():
         password = request.form.get("password")
         # just check to make sure the password isn't empty and that it's at least 4 characters long
         # otherwise this can be considered a "weak" password choice
-        if (password != "") or (len(password) < 4):
+        if (password == "") or (len(password) < 4):
             invalid_password = True
         
         invalid_ssn = False
@@ -144,9 +150,45 @@ def create_user_page():
         # regex found @ https://stackoverflow.com/questions/5294314/python-get-number-of-years-that-have-passed-from-date-string
         if not re.match("(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})", phone_number):
             invalid_phone = True
+            
+        invalid_email = False
+        email = request.form.get("email")
+        # regex found @ https://regexlib.com/Search.aspx?k=email&AspxAutoDetectCookieSupport=1
+        if (email == "") or (not re.match("^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$", email)):
+            invalid_email = True
+        
+        # if one of the user constraints fail (as defined bellow) let the user know this
+        invalid_role = False
+        
+        is_patient = False
+        if ("is-patient" in request.form) and ("insurance" in request.form):
+            is_patient = True
+            insurance = request.form.get("insurance")
+        
+        is_dentist = False
+        if ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
+            is_dentist = True
+            works_at = request.form.get("works-at")
+            specialty = request.form.get("specialty")
+            
+        is_admin = False
+        # an admin cannot be a dentist, and a dentist cannot be an admin
+        if (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form):
+            is_admin = True
+            works_at = request.form.get("works-at")
+        else:
+            invalid_role = True
+        
+        is_manager = False
+        # a branch manager must be either an admin or a dentist
+        if ("is-manager" in request.form) and (is_admin or is_dentist):
+            is_manager = True   
+            manages = works_at
+        else:
+            invalid_role = True
         
         # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
-        if (not invalid_name) or (not invalid_address) or (not invalid_age) or (not invalid_password) or (not invalid_phone) or (not invalid_ssn):
+        if invalid_name or invalid_address or invalid_age or invalid_password or invalid_phone or invalid_ssn or invalid_role:
             return render_template(
                 "createuser.html",
                 invalid_name=invalid_name,
@@ -154,7 +196,10 @@ def create_user_page():
                 invalid_age=invalid_age,
                 invalid_password=invalid_password,
                 invalid_phone=invalid_phone,
-                invalid_ssn=invalid_ssn
+                invalid_ssn=invalid_ssn,
+                invalid_email=invalid_email,
+                invalid_role=invalid_role,
+                previous_form=request.form,
             )
         else:
             # give all the data in the form is valid, submit it to postgres
@@ -164,7 +209,8 @@ def create_user_page():
             # no error has been generated, display that the user creation was successful
             return render_template(
                 "createuser.html", 
-                success=True
+                success=True,
+                previous_form=request.form
             )
     else:
         return render_template("createuser.html")
