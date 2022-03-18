@@ -44,3 +44,7 @@
 .error-box {
     @apply flex w-full rounded-sm p-1 font-bold bg-red-500 text-gray-50;
 }
+
+.success-box {
+    @apply flex w-full rounded-sm p-1 font-bold bg-green-500 text-gray-50;
+}
