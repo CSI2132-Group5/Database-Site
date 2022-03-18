@@ -1,0 +1,134 @@
+{% extends "dashboard.html" %}
+
+{% block title %}Create User{% endblock %}
+{% block page_title %}Create User{% endblock %}
+{% block page_description %}Administrators can create new User Accounts.{% endblock %}
+
+
+{% block content %}
+<div class="m-4">
+    {% if success == True %}
+    <div id="name-warning" class="error-box hidden"> <!-- login error box -->
+        <box-icon name='x' color='#fdfbfb' ></box-icon>
+        <h3 class="ml-0.5">A name field is empty</h3>
+    </div>
+    {% endif %}
+    <form method="post">
+        <div>
+            {% if invalid_name == True %}
+                <div id="name-warning" class="error-box hidden"> <!-- login error box -->
+                    <box-icon name='x' color='#fdfbfb' ></box-icon>
+                    <h3 class="ml-0.5">A name field is empty</h3>
+                </div>
+            {% endif %}
+            <div class="flex">
+                <div class="m-1">
+                    <h5 class="font-light">First Name</h5>
+                    <input name="first-name" type="text" class="input-box">
+                </div>
+                <div class="m-1">
+                    <h5 class="font-light">Middle Name</h5>
+                    <input name="middle-name" type="text" class="input-box">
+                </div>
+                <div class="m-1">
+                    <h5 class="font-light">Last Name</h5>
+                    <input name="last-name" type="text" class="input-box">
+                </div>
+            </div>
+        </div>
+        <div class="mt-5">
+            {% if invalid_age == True %}
+                <div id="age-warning" class="error-box hidden"> <!-- login error box -->
+                    <box-icon name='x' color='#fdfbfb' ></box-icon>
+                    <h3 class="ml-0.5">Age is an illegal value</h3>
+                </div>
+            {% endif %}
+            <div class="flex m-1">
+                <div class="m-1">
+                    <h5 class="font-light">Gender</h5>
+                    <select name="gender" id="gender" class="input-box">
+                        <option value="0">Male</option>
+                        <option value="1">Female</option>
+                        <option value="2">Other</option>
+                    </select>
+                </div>
+                <div class="m-1">
+                    <h5 class="font-light">Age</h5>
+                    <input name="age" type="number" class="input-box">
+                </div>
+            </div>
+        </div>
+        <div class="mt-5">
+            {% if invalid_address == True %}
+                <div id="address-warning" class="error-box hidden"> <!-- login error box -->
+                    <box-icon name='x' color='#fdfbfb' ></box-icon>
+                    <h3 class="ml-0.5">One address field is empty</h3>
+                </div>
+            {% endif %}
+            <div class="flex">
+                <div class="m-1">
+                    <h5 class="font-light">Address</h5>
+                    <input name="address" type="text" class="input-box">
+                    
+                </div>
+                <div class="m-1">
+                    <h5 class="font-light">Street Name</h5>
+                    <input name="street-name" type="text" class="input-box">
+                </div>
+                <div class="m-1">
+                    <h5 class="font-light">House Number</h5>
+                    <input name="house-number" type="text" class="input-box">
+                </div>
+            </div>
+        </div>
+        <div class="flex mt-5">
+            <div class="m-1">
+                <h5 class="font-light">City</h5>
+                <input name="city" type="text" class="input-box">
+            </div>
+            <div class="m-1">
+                <h5 class="font-light">Province</h5>
+                <input name="province" type="text" class="input-box">
+            </div>
+        </div>
+        <div class="flex mt-5">
+            <div class="m-1">
+                <h5 class="font-light">Date of Birth</h5>
+                <input type="date" id="start" name="date-birth" value="2018-07-22" min="2018-01-01" max="2018-12-31">
+            </div>
+            <div class="m-1">
+                {% if invalid_password == True %}
+                    <div id="password-warning" class="error-box hidden"> <!-- login error box -->
+                        <box-icon name='x' color='#fdfbfb' ></box-icon>
+                        <h3 class="ml-0.5">Password invalid</h3>
+                    </div>
+                {% endif %}
+                <h5 class="font-light">Password</h5>
+                <input name="password" type="text" class="input-box">
+            </div>
+            <div class="m-1">
+                {% if invalid_ssn == True %}
+                    <div id="ssn-warning" class="error-box hidden"> <!-- login error box -->
+                        <box-icon name='x' color='#fdfbfb' ></box-icon>
+                        <h3 class="ml-0.5">SSN is invalid</h3>
+                    </div>
+                {% endif %}
+                <h5 class="font-light">SSN</h5>
+                <input name="ssn" type="text" class="input-box">
+            </div>
+            <div class="m-1">
+                {% if invalid_phone == True %}
+                    <div id="phone-warning" class="error-box hidden"> <!-- login error box -->
+                        <box-icon name='x' color='#fdfbfb' ></box-icon>
+                        <h3 class="ml-0.5">Phone is invalid</h3>
+                    </div>
+                {% endif %}
+                <h5 class="font-light">Phone Number</h5>
+                <input name="phone-number" type="text" class="input-box">
+            </div> 
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input id="login-submit" type="submit" class="mt-5 pl-5 pr-5 pt-1 pb-1 rounded-sm bg-charcoal-700 hover:bg-purple-600 text-gray-50 transition duration-500 ease-in-out">
+    </form>
+</div>
+{% endblock %}

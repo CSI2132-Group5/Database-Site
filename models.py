@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from dataclasses import dataclass
 
-import datetime
+from datetime import datetime
 
 @dataclass
 class User(UserMixin):
@@ -21,6 +21,7 @@ class User(UserMixin):
     phone_number:str
     age:int
     password:str
+    dateofbirth:datetime
     
     def get_id(self) -> int:
         return self.ssn
@@ -45,15 +46,15 @@ class User(UserMixin):
             self.date_of_birth,
             self.phone_number,
             self.age,
-            self.password
+            self.password,
+            self.dateofbirth
         )
     
     @staticmethod
     def from_postgres(row: list):
-        # check to ensure the number of cells in the list matches the columns
-        # in the postgres User table
-        if len(row) != 16:
-            return None
+        # there is an optional dateofbirth column, hence, we need to check if it has been passed to the
+        # function from postgres and handle it accordingly
+        #       ELSE -> pass a None value type to the class in place
         return User(
             int(row[0]),
             row[1],
@@ -70,5 +71,6 @@ class User(UserMixin):
             int(row[12]),
             row[13],
             int(row[14]),
-            row[15]
+            row[15],
+            datetime.strptime(row[16], "%Y-%m-%d") if row[16] != None else None
         )

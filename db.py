@@ -52,9 +52,11 @@ def authenticate_user(username:str, password:str) -> models.User:
             cursor.execute("SELECT * FROM \"User\" WHERE email_address like %s AND password LIKE %s", (username, password))
             db_response = cursor.fetchall()
             
+            print(db_response[0])
             # this would imply either the ssn does not exist in the postgres or the unique
             # key constaints in the database has broken causing duplicate columns
             if (not db_response) or (len(db_response) != 1):
+                print("[ERROR] Invalid Authentication Request to Postgres")
                 return  # user does not exist
             
             # we only care about the first index (and should be the only)

@@ -34,9 +34,13 @@
 }
 
 .input-box {
-    @apply w-52 pl-1 border-2 rounded-sm border-gray-200 outline-none;
+    @apply w-full border-2 border-gray-100;
 }
 
 .admin-option-button {
     @apply pt-1 pb-1 pl-2 pr-2 rounded-sm shadow-md border-2 border-gray-100 bg-gray-50 font-thin;
+}
+
+.error-box {
+    @apply flex w-full rounded-sm p-1 font-bold bg-red-500 text-gray-50;
 }
