@@ -14,21 +14,63 @@
 
 		<title>CSI 2132 ~ Group 5</title>
 	</head>
-	<body>
-		<!-- Image and text -->
-		<div class="grid place-content-center md:flex md:justify-start items-center w-full border-b-2 shadow-md md:pl-20 md:pr-20 lg:pl-30 lg:pr-30 pt-1 md:pt-3 pb-1 md:pb-3">
-			<div class="flex items-center">
-				<a class="md:p-3 text-xl font-bold md:font-medium text-center" href="#">CSI 2132 ~ Group 5</a>
+
+	<nav class="bg-black">
+		<div class="items-center w-full shadow-md md:pl-20 md:pr-20 lg:pl-30 lg:pr-30 pt-1 md:pt-3 pb-1 md:pb-3">
+			<div class="flex justify-between">
+				<div class="flex space-x-10 items-center px-3 py-3">
+					<div>
+						<a href="#" class="flex items-center">
+							<object class="mr-2">
+								<embed src="{{url_for('static',filename='assets/Logo.svg')}}">
+							</object>
+						<span class="font-bold text-white font-ubuntu text-3xl">The Dentistry</span><span class="text-3xl text-green-300 font-bold">.</span>
+					</div>
+					
+				</div>
+				<div class="flex items-center">
+					<div class="items-center">
+						
+						<a href="#about" class="px-4 py-2 mr-10 rounded-xl text-white font-semibold text-lg hover:bg-white hover:text-black transition-all duration-300">About Us.</a>
+					</div class="px-10">
+					<a href="{{ url_for('login') }}" class="px-5 py-2 bg-black text-white rounded-xl border-2 border-white hover:bg-white hover:text-black text-lg font-semibold transition-all duration-300">Login.</a>
+				</div>
 			</div>
 		</div>
+	</nav>
 
-		<!-- SPACE OUT THE SECTION  -->
-	
-		<footer class="absolute bottom-0 w-full bg-gray-50 pt-5">
-			<div class="flex justify-center mt-5 pt-1 pb-1 bg-charcoal-700 text-gray-50">© 2019-2021 Copyright ~</div>
-		</footer>
+	<body>
+		<main>
+		
+			<div class="flex">
+				<div class="space-x-10 px-3 py-3 float-left w-1/2 h-screen relative flex flex-col justify-center items-center">
+					<div class="px-5 py-5 sm:text-5xl lg:text-7xl font-bold font-ubuntu text-center m-auto">
+						<p>The Smart Way to Manage a Clinic<span class="text-green-300 font-bold">.</span></p>
+						<p class="text-3xl pt-7 pb-4">Login to view your data and manage activities<span class="text-green-300 font-bold">.</span></p>
+						<a href="{{ url_for('login') }}" class="px-10 py-3 font-bold text-2xl bg-black text-white rounded-xl border-4 border-white hover:bg-white hover:text-black hover:border-black transition-all duration-300">Login.</a>
+					</div>
+				</div>
 
-		<script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
-		<script src="{{ url_for('static', filename='javascript/index.js') }}"></script>
+				<div class="lg:absolute lg:right-0 lg:w-1/2 lg:h-full">
+					<img src="{{url_for('static',filename='assets/hero_image.png')}}" class="h-56 w-full object-cover sm:h-full md:h-full lg:w-full lg:h-full">
+				</div>
+			</div>
+			<div id="about" class="py-10 bg-black text-white font-bold text-5xl px-32">
+				<p>About Us.</p>
+			</div>
+			<div class="px-32 py-10">
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas maximus tellus quis ex tempus ultricies. Maecenas at magna venenatis, consequat justo a, faucibus elit. Cras pharetra ipsum quis dui luctus, sed sodales massa fermentum. Phasellus scelerisque ornare purus, a euismod purus feugiat at. Quisque euismod at erat a imperdiet. In id quam a magna imperdiet congue. Morbi eget enim dignissim, pretium lectus sit amet, convallis metus. Donec nec molestie elit, in iaculis urna. Cras vehicula nisi sit amet dui dapibus, id congue risus placerat. Praesent et augue tempor, ultricies justo sed, sagittis arcu. Suspendisse vel ullamcorper leo, in accumsan velit. Phasellus in pellentesque risus. Aliquam pellentesque eleifend dignissim. Duis in mauris sed nulla pulvinar iaculis. Nam pulvinar et justo et dapibus. Vestibulum a molestie quam, sit amet lacinia nisi.</p>
+			<br>
+			<p>Vestibulum sit amet diam sit amet velit fringilla scelerisque. Integer suscipit ligula eu tellus pharetra pretium a id orci. Donec efficitur neque non nunc facilisis, id vulputate lacus molestie. Suspendisse eu metus mollis, gravida ante nec, lacinia felis. Nullam pellentesque, tortor ac facilisis elementum, est nulla aliquam nisi, eget vulputate augue nibh eu nisi. Quisque condimentum dui sed arcu molestie pharetra. In quis ultrices augue, sed volutpat ipsum. Aliquam vestibulum dui eget arcu imperdiet, sed placerat mauris posuere. Proin tincidunt justo quis lectus consectetur feugiat. Proin vestibulum lacinia nulla, eget vestibulum justo posuere ornare. Fusce massa mi, consequat ut erat at, tempus finibus orci.</p>
+
+			</div>
+		
+			<footer class="fixed bottom-0 w-full">
+				<div class="flex justify-center mt-5 pt-1 pb-1 bg-black text-white">© 2019-2021 Copyright</div>
+			</footer>
+
+			<script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
+			<script src="{{ url_for('static', filename='javascript/index.js') }}"></script>
+		</main>
 	</body>
 </html>
