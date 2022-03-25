@@ -1,3 +1,4 @@
+from tokenize import String
 from flask_login import UserMixin
 from dataclasses import dataclass
 
@@ -72,7 +73,8 @@ class User(UserMixin):
             row[13],
             int(row[14]),
             row[15],
-            datetime.strptime(row[16], "%Y-%m-%d") if row[16] != None else None
+           # datetime.datetime.strptime(row[16], "%Y-%m-%d") if row[16] != None else None
+            datetime.strftime(row[16], "%Y-%m-%d") if row[16] != None else None
         )
         
 @dataclass
@@ -179,3 +181,29 @@ class BranchManager:
             int(row[1]),
             int(row[0])
         )
+
+@dataclass
+class Branch:
+   name:String 
+   address:String
+   street_name:String
+   street_number:int
+   city: String # primary key
+   province: String
+   opening_time: datetime
+   closing_time: datetime
+   id: int
+   def to_tuple(self):
+       return (
+           self.name,
+           self.address,
+           self.street_name,
+           self.street_number,
+           self.city,
+           self.province,
+           self.opening_time,
+           self.closing_time,
+           self.id
+       )
+
+  
