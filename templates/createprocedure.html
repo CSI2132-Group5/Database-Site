@@ -1,0 +1,136 @@
+{% extends "dashboard.html" %}
+
+{% block title %}Create Procedure{% endblock %}
+{% block page_title %}Create Procedure{% endblock %}
+{% block page_description %}Dentists can create new Procedures.{% endblock %}
+
+
+{% block content %}
+<div class="m-4">
+    {% if success == True %}
+    <div id="description-warning" class="success-box hidden"> <!-- login error box -->
+        <box-icon name='x' color='#fdfbfb' ></box-icon>
+        <h3 class="ml-0.5">Success! A procedure with id {{ previous_form.get('procedure_id') }} has been added to the database.</h3>
+    </div>
+    {% endif %}
+    <form method="post">
+        <div class="flex">
+            <div> <!-- left side of form -->
+                <div>
+                    {% if invalid_category == True %}
+                        <div id="category-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Category field is empty</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex">
+                        <div class="m-1">
+                            <h5 class="font-light">Category</h5>
+                            <input name="category" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('category') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_procedure_id == True %}
+                        <div id="procedure_id-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Procedure Id must be a number greater than 0</h3>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Procedure Id</h5>
+                            <input name="procedure_id" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('procedure_id') }}" {% endif %}>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_procedure_code == True %}
+                        <div id="procedure_code-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Procedure code must have a length of 15</h3>
+                        </div>
+                    {% endif %}
+                   
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Procedure Code</h5>
+                            <input name="procedure_code" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('procedure_code') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    {% if invalid_tooth_number == True %}
+                        <div id="tooth_number-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Tooth number must be between 1-32 inclusively</h3>
+                        </div>
+                    {% endif %}
+                   
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Tooth Number</h5>
+                            <input name="tooth_number" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('tooth_number') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="ml-5 pl-10 border-l-2 border-gray-200"> <!-- right side of form -->
+                <div>
+                    {% if invalid_description == True %}
+                        <div id="description-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Procedure description is empty</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex">
+                        <div class="m-1">
+                            <h5 class="font-light">Description of Procedure</h5>
+                            <input name="description" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('description') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_appointment_id == True %}
+                        <div id="appointment_id-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Appointment Id must be a number greater than 0</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Appointment Id</h5>
+                            <input name="appointment_id" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('appointment_id') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                   
+                    {% if invalid_procedure_type == True %}
+                        <div id="procedure_type-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Procedure type is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Procedure Type</h5>
+                            <input name="procedure_type" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('procedure_type') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input id="login-submit" type="submit" class="mt-10 pl-5 pr-5 pt-1 pb-1 rounded-sm bg-charcoal-700 hover:bg-green-300 text-gray-50 transition duration-500 ease-in-out">
+    </form>
+
+
+</div>
+{% endblock %}
