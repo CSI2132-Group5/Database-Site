@@ -16,7 +16,7 @@ from flask_login import (
 from flask_login.utils import login_required
 from flask_wtf import CSRFProtect
 
-from db import authenticate_user, fetch_user, create_user
+from db import authenticate_user, fetch_user, create_user,fetch_users
 
 from datetime import datetime
 import re
@@ -215,5 +215,14 @@ def create_user_page():
     else:
         return render_template("createuser.html")
 
+@app.route('/admin/viewuser', methods=["GET", "POST"])
+@login_required
+def view_user_page():
+    
+    return render_template(
+        "users.html", 
+         users=fetch_users()
+    )
+  
 if __name__ == "__main__":
     app.run()
