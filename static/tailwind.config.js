@@ -43,7 +43,8 @@ module.exports = {
       },
       fontFamily: {
         body: ['Nunito'],
-        lobster: ['Lobster', 'cursive']
+        lobster: ['Lobster', 'cursive'],
+        ubuntu: ['Ubuntu', 'cursive']
       },
       backgroundImage: {
         splash: 'url(\'/static/bin/splash.jpeg\')'

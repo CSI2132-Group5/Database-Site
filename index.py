@@ -296,6 +296,96 @@ def create_user_page():
     else:
         return render_template("createuser.html")
 
+@app.route('/dentist/createprocedure', methods=["GET", "POST"])
+@login_required
+def create_procedure_page():
+    if request.method == "POST":
+        
+        invalid_category = False  # will be marked as true if category has been submitted empty
+        category = request.form.get("category")
+
+        # ensure the category is not blank
+        if (category == ""):
+            print(category)
+            invalid_category = True
+
+
+        invalid_description= False  # will be marked as true if description has been submitted empty
+        description = request.form.get("description")
+
+        # ensure the description is not blank
+        if (description == ""):
+            print(description)
+            invalid_description = True
+            
+        invalid_procedure_id = False
+        procedure_id=request.form.get("procedure_id") # will be marked as true if procedure id has been submitted empty
+
+        # ensure the procedure id is not blank
+        if (procedure_id == "") or (int(request.form.get("procedure_id")) <= 0):
+            print(procedure_id)
+            invalid_procedure_id = True
+
+        invalid_appointment_id = False
+        appointment_id=request.form.get("appointment_id") # will be marked as true if appointment id has been submitted empty
+
+        # ensure the appointment id is not blank
+        if (appointment_id == "") or (int(request.form.get("appointment_id")) <= 0):
+            print(appointment_id)
+            invalid_appointment_id = True
+
+        invalid_procedure_code = False
+        procedure_code=request.form.get("procedure_code") # will be marked as true if procedure code has been submitted empty
+
+        # ensure the procedure code is not blank and equals 15 as required in our domain integrity constraints
+        if (procedure_code == "") or (len(procedure_code) != 15):
+            print(procedure_code)
+            invalid_procedure_code = True
+
+        invalid_procedure_type = False
+        procedure_type=request.form.get("procedure_type") # will be marked as true if procedure type has been submitted empty
+
+        # ensure the procedure type is not blank
+        if (procedure_type == ""):
+            print(procedure_type)
+            invalid_procedure_type = True
+
+        invalid_tooth_number = False
+        tooth_number=request.form.get("tooth_number") # will be marked as true if tooth number has been submitted empty
+
+        # ensure the tooth number is not blank and is between 1-32 inclusively
+        if (tooth_number == "") or (int(request.form.get("tooth_number")) <= 0) or (int(request.form.get("tooth_number")) >= 33):
+            print(tooth_number)
+            invalid_tooth_number = True
+        
+        
+        # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
+        if invalid_category or invalid_description or invalid_procedure_id or invalid_appointment_id or invalid_procedure_code or invalid_procedure_type or invalid_tooth_number:
+            return render_template(
+                "createprocedure.html",
+                invalid_category=invalid_category,
+                invalid_description=invalid_description,
+                invalid_procedure_id=invalid_procedure_id,
+                invalid_appointment_id=invalid_appointment_id,
+                invalid_procedure_code=invalid_procedure_code,
+                invalid_procedure_type=invalid_procedure_type,
+                invalid_tooth_number=invalid_tooth_number,
+                previous_form=request.form,
+            )
+        else:
+            # give all the data in the form is valid, submit it to postgres
+            
+            # TODO - submit a procedure to the postgres db
+            
+            # no error has been generated, display that the procedure creation was successful
+            return render_template(
+                "createprocedure.html", 
+                success=True,
+                previous_form=request.form
+            )
+    else:
+        return render_template("createprocedure.html")
+
 @app.route('/admin/viewuser', methods=["GET", "POST"])
 @login_required
 def view_user_page():
@@ -304,6 +394,6 @@ def view_user_page():
         "users.html", 
          users=fetch_users()
     )
-  
+
 if __name__ == "__main__":
     app.run()
