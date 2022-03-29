@@ -632,7 +632,7 @@ if __name__ == "__main__":
         assigned_room=934,
         located_at=0,
         appointment_patient=1433,
-        appointment_dentist=9999
+        appointment_dentist=1233
     )
     branchManager = models.BranchManager (
         user_ssn=7547,
@@ -680,10 +680,10 @@ if __name__ == "__main__":
     #create_dentist(dentist1)
     #delete_user(user3)
     #create_branch(branch)
-    #add_appointment(appointment)
+    create_appointment(appointment)
     #delete_appointment(appointment)
     #delete_branch(branch)
     #fetch_employee(1294)
     #fetch_dentist(1233)
     #create_procedure_category(procedure_category1)
-    create_appointment_procedure(appointmentProcedure)
+    #create_appointment_procedure(appointmentProcedure)

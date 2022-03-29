@@ -223,26 +223,8 @@ def create_user_page():
             # give all the data in the form is valid, submit it to postgres
             
             # TODO - submit a user to the postgres db
-         """           user = models.User(
-        ssn = 1234, 
-        address = "random road", 
-        house_number = 52, 
-        street_name = "clown drive", 
-        street_number = 42,
-        city = "Ottawa",
-        province = "Ontario", 
-        first_name = "Joe", 
-        middle_name = "Robert", 
-        last_name = "Smith", 
-        gender = 0, 
-        email_address = "joe.smith@gmail.com",
-        date_of_birth = 0, 
-        phone_number = "2345324455", 
-        age = 25, 
-        password = "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3",
-        dateofbirth="1970-03-03"
-    ) """
-        create_user(models.User(
+    
+          create_user(models.User(
             ssn=ssn,
             address=address,
             house_number=house_number,
