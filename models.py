@@ -264,12 +264,28 @@ class DentalAppliance:
 class ProcedureCategory:
     category_name: text
     description: text
-    parent_category: text
     category_id: int
     def to_tuple(self):
        return (
            self.category_name,
            self.description,
-           self.parent_category,
            self.category_id
+       )
+
+@dataclass
+class Invoice:
+    issue_date:datetime
+    total_charge: float
+    discount:int
+    penalty:int
+    id:int
+    receptionist_ssn:int
+    def to_tuple(self):
+       return (
+       self.issue_date,
+       self.total_charge,
+       self.discount,
+       self.penalty,
+       self.id,
+       self.receptionist_ssn
        )

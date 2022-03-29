@@ -514,7 +514,7 @@ def create_procedure_category(procedure_category: models.ProcedureCategory)->boo
     print("[LOG] Creating procedure category in the db.")
     try:
       with db.cursor() as cursor:
-          query = """INSERT INTO "ProcedureCategory" (category_name,description,parent_category,category_id) VALUES(%s,%s,%s,%s);"""
+          query = """INSERT INTO "ProcedureCategory" (category_name,description,category_id) VALUES(%s,%s,%s);"""
           cursor.execute(query, procedure_category.to_tuple())
           db.commit()
 
@@ -523,6 +523,20 @@ def create_procedure_category(procedure_category: models.ProcedureCategory)->boo
         print("[ERROR] Failed to insert appointment procedure into the database.")
         print(traceback.format_exc())
         return False  
+def create_invoice(invoice: models.Invoice)->bool:
+    print("[LOG] Creating invoice in the db.")
+    try:
+      with db.cursor() as cursor:
+          query = """INSERT INTO "Invoice" (issue_date,total_charge,discount,penalty,id,receptionist_ssn) VALUES(%s,%s,%s,%s,%s,%s);"""
+          cursor.execute(query, invoice.to_tuple())
+          db.commit()
+
+          return True
+    except Exception:
+        print("[ERROR] Failed to insert invoice into the database.")
+        print(traceback.format_exc())
+        return False  
+
 if __name__ == "__main__":
     user = models.User(
         ssn = 1234, 
@@ -634,14 +648,21 @@ if __name__ == "__main__":
         procedure_category="wisdom teeth"
     ) 
     procedure_category1 = models.ProcedureCategory(
-        category_name="wisdom tooth surgery",
+        category_name="wisdom teeth",
         description="n/a",
-        parent_category="surgery",
         category_id="0"
     )
     admin1 = models.Admin (
         user_ssn=1294,
         works_at=0
+    )
+    invoice1 = models.Invoice(
+        issue_date="2022-03-04",
+        total_charge=34.00,
+        discount=23,
+        penalty=0,
+        id=1,
+        receptionist_ssn=1294
     )
     #create_user(user)
     #create_user(user2)
@@ -652,17 +673,17 @@ if __name__ == "__main__":
     create_branch_manager(branchManager)
     create_patient(patient1)
     #delete_patient(patient1)
-    
+    #create_invoice(invoice1)
     #delete_employee(employee1)
     
     #create_employee(employee1)
     #create_dentist(dentist1)
     #delete_user(user3)
-    create_branch(branch)
+    #create_branch(branch)
     #add_appointment(appointment)
     #delete_appointment(appointment)
     #delete_branch(branch)
     #fetch_employee(1294)
     #fetch_dentist(1233)
     #create_procedure_category(procedure_category1)
-    #create_appointment_procedure(appointmentProcedure)
+    create_appointment_procedure(appointmentProcedure)
