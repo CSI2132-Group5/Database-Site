@@ -306,5 +306,119 @@ def create_procedure_page():
     else:
         return render_template("createprocedure.html")
 
+@app.route('/admin/createappointment', methods=["GET", "POST"])
+@login_required
+def create_appointment_page():
+    if request.method == "POST":
+        
+
+        invalid_appointment_id = False
+        appointment_id=request.form.get("appointment_id") # will be marked as true if appointment id has been submitted empty
+
+        # ensure the appointment id is not blank and is a value greater than 0
+        if (appointment_id == "") or (int(request.form.get("appointment_id")) <= 0):
+            print(appointment_id)
+            invalid_appointment_id = True
+
+
+        invalid_appointment_date = False
+        appointment_date=request.form.get("appointment_date") # will be marked as true if appointment date has been submitted empty
+
+        # ensure the appointment date is not blank
+        if (appointment_date == ""):
+            print(appointment_date)
+            invalid_appointment_date = True
+
+        invalid_start_time = False
+        start_time=request.form.get("start_time") # will be marked as true if start time has been submitted empty
+
+        # ensure the start time is not blank
+        if (start_time == ""):
+            print(start_time)
+            invalid_start_time = True
+
+        invalid_end_time = False
+        end_time=request.form.get("end_time") # will be marked as true if end time has been submitted empty
+
+        # ensure the end time is not blank
+        if (end_time == ""):
+            print(end_time)
+            invalid_end_time = True
+
+        invalid_assigned_room = False
+        assigned_room=request.form.get("assigned_room") # will be marked as true if assigned room has been submitted empty
+
+        # ensure the assigned room is not blank
+        if (assigned_room == ""):
+            print(assigned_room)
+            invalid_assigned_room = True
+
+        invalid_located_at  = False
+        located_at=request.form.get("located_at") # will be marked as true if location has been submitted empty
+
+        # ensure the location is not blank
+        if (located_at == ""):
+            print(located_at)
+            invalid_located_at = True
+
+        invalid_patient_id = False
+        patient_id=request.form.get("patient_id") # will be marked as true if patient id has been submitted empty
+
+        # ensure the patient id is not blank and is a value greater than 0
+        if (patient_id == "") or (int(request.form.get("patient_id")) <= 0):
+            print(patient_id)
+            invalid_patient_id = True
+
+        invalid_dentist_id = False
+        dentist_id=request.form.get("dentist_id") # will be marked as true if dentist id has been submitted empty
+
+        # ensure the dentist id is not blank and is a value greater than 0
+        if (dentist_id == "") or (int(request.form.get("dentist_id")) <= 0):
+            print(dentist_id)
+            invalid_dentist_id = True
+
+        invalid_status = False
+        status = int(request.form.get("status"))
+        # ensure that the appointment status is (0) no show, (1) cancelled, (2) completed, or unscheduled
+        if (status < 0) or (status > 3):
+            invalid_status = True
+
+
+        invalid_appointment_type = False
+        appointment_type = int(request.form.get("appointment_type"))
+        # ensure that the appointment type is a (0) check up, or (1) surgery
+        if (appointment_type < 0) or (appointment_type > 1):
+            invalid_appointment_type = True
+        
+        # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
+        if invalid_appointment_id or invalid_appointment_date or invalid_start_time or invalid_end_time or invalid_assigned_room or invalid_located_at or invalid_patient_id or invalid_dentist_id or invalid_status or invalid_appointment_type:
+            return render_template(
+                "createappointment.html",
+                invalid_appointment_id=invalid_appointment_id,
+                invalid_appointment_date=invalid_appointment_date,
+                invalid_start_time=invalid_start_time,
+                invalid_end_time=invalid_end_time,
+                invalid_assigned_room=invalid_assigned_room,
+                invalid_located_at=invalid_located_at,
+                invalid_patient_id=invalid_patient_id,
+                invalid_dentist_id=invalid_dentist_id,
+                invalid_status=invalid_status,
+                invalid_appointment_type=invalid_appointment_type,
+
+            )
+        else:
+            # give all the data in the form is valid, submit it to postgres
+            
+            # TODO - submit an appointment to the postgres db
+            
+            # no error has been generated, display that the appointment creation was successful
+            return render_template(
+                "createappointment.html", 
+                success=True,
+                previous_form=request.form
+            )
+    else:
+        return render_template("createappointment.html")
+
 if __name__ == "__main__":
     app.run()

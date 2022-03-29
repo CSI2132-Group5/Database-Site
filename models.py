@@ -72,7 +72,7 @@ class User(UserMixin):
             row[13],
             int(row[14]),
             row[15],
-            datetime.strptime(row[16], "%Y-%m-%d") if row[16] != None else None
+            datetime.strftime(row[16], "%Y-%m-%d") if row[16] != None else None
         )
         
 @dataclass
