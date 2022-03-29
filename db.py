@@ -31,7 +31,7 @@ def fetch_user(ssn:int) -> models.User:
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"User\" WHERE \"SSN\"=%s", (ssn, ))
+            cursor.execute("SELECT * FROM public.\"User\" WHERE \"SSN\"=%s", (ssn, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -68,7 +68,7 @@ def fetch_admin(user_ssn:int) -> models.Admin:
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"Admin\" WHERE \"user_ssn\"=%s", (user_ssn, ))
+            cursor.execute("SELECT * FROM \"Receptionist\" WHERE \"user_ssn\"=%s", (user_ssn, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -363,7 +363,7 @@ def delete_admin(admin: models.Admin)->bool:
             existence_check = fetch_admin(admin.user_ssn)
             if existence_check is None:
                return False
-            cursor.execute("DELETE FROM \"Admin\" WHERE \"user_ssn\"=%s", (admin.user_ssn, ))
+            cursor.execute("DELETE FROM \"Receptionist\" WHERE \"user_ssn\"=%s", (admin.user_ssn, ))
             db.commit()
             
             return True
@@ -599,15 +599,15 @@ if __name__ == "__main__":
         user_ssn= 7547
     )
     branch = models.Branch (
-        name="Montana",
-        address="ro road",
-        street_name="Mission Street",
+        name="Res",
+        address="nono road",
+        street_name="Main Street",
         street_number="12",
-        city="Toronto",
+        city="Hamilton",
         province="Ontario",
         opening_time="09:00:06",
         closing_time="18:00:00",
-        id="33"
+        id=37
     )
     appointment = models.Appointment (
         id = "12",
@@ -621,7 +621,7 @@ if __name__ == "__main__":
         appointment_dentist=9999
     )
     branchManager = models.BranchManager (
-        user_ssn="7547",
+        user_ssn=7547,
         manages=0,
     )
     appointmentProcedure = models.AppointmentProcedure(
@@ -639,10 +639,15 @@ if __name__ == "__main__":
         parent_category="surgery",
         category_id="0"
     )
+    admin1 = models.Admin (
+        user_ssn=1294,
+        works_at=0
+    )
     #create_user(user)
     #create_user(user2)
     create_user(user3)
     #delete_user(1999)
+    #create_admin(admin1)
     create_employee(employee1)
     create_branch_manager(branchManager)
     create_patient(patient1)
@@ -653,7 +658,7 @@ if __name__ == "__main__":
     #create_employee(employee1)
     #create_dentist(dentist1)
     #delete_user(user3)
-    #create_branch(branch)
+    create_branch(branch)
     #add_appointment(appointment)
     #delete_appointment(appointment)
     #delete_branch(branch)
