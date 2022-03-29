@@ -18,6 +18,7 @@ from flask_wtf import CSRFProtect
 
 from db import authenticate_user, fetch_user, create_user,fetch_users,create_admin,create_dentist,create_employee,create_patient,create_branch_manager
 import models
+import hashlib
 from datetime import datetime
 import re
 
@@ -240,30 +241,30 @@ def create_user_page():
             date_of_birth=0,
             phone_number=phone_number,
             age=age,
-            password=password,
+            password=str(hashlib.sha256(password.encode('utf-8')).hexdigest()),
             dateofbirth=date_of_birth
         )
         )
-        if (is_admin):
+        if is_admin:
             create_admin(models.Admin(
                user_ssn=ssn,
                works_at=works_at 
             )
             )
-        if (is_dentist):
+        if is_dentist:
             create_dentist(models.Dentist (
                specialty=specialty,
                user_ssn=ssn,
                works_at=works_at
             )
             )
-        if (is_manager):
+        if is_manager:
             create_branch_manager(models.BranchManager(
                manages=manages,
                user_ssn=ssn
             )
             )
-        if (is_patient):
+        if is_patient:
             create_patient(models.Patient(
               user_ssn=ssn,
               insurance_company=insurance 

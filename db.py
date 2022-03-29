@@ -680,7 +680,7 @@ if __name__ == "__main__":
     #create_dentist(dentist1)
     #delete_user(user3)
     #create_branch(branch)
-    create_appointment(appointment)
+    #create_appointment(appointment)
     #delete_appointment(appointment)
     #delete_branch(branch)
     #fetch_employee(1294)
