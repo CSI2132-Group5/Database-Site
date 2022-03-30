@@ -185,22 +185,32 @@ def create_user_page():
             insurance = request.form.get("insurance")
         
         is_dentist = False
-        if ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
+        if ("is-employee" in request.form) and ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
             is_dentist = True
             works_at = request.form.get("works-at")
+            role = request.form.get("role")
+            type = request.form.get("type")
+            salary = request.form.get("salary")
+            shift_start = request.form.get("shift-start")
+            shift_end = request.form.get("shift-end")
             specialty = request.form.get("specialty")
             
         is_admin = False
         # an admin cannot be a dentist, and a dentist cannot be an admin
-        if (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form):
+        if ("is-employee" in request.form) and (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
             is_admin = True
             works_at = request.form.get("works-at")
+            role = request.form.get("role")
+            type = request.form.get("type")
+            salary = request.form.get("salary")
+            shift_start = request.form.get("shift-start")
+            shift_end = request.form.get("shift-end")
         else:
             invalid_role = True
         
         is_manager = False
         # a branch manager must be either an admin or a dentist
-        if ("is-manager" in request.form) and (is_admin or is_dentist):
+        if ("is-employee" in request.form) and ("is-manager" in request.form) and (is_admin or is_dentist):
             is_manager = True   
             manages = works_at
         else:
@@ -245,6 +255,15 @@ def create_user_page():
             dateofbirth=date_of_birth
         )
         )
+        if is_admin or is_dentist or is_manager:
+           create_employee(models.Employee(
+               user_ssn=ssn,
+               role=role,
+               type=type,
+               salary=salary,
+               shift_start=shift_start,
+               shift_end=shift_end
+           ))
         if is_admin:
             create_admin(models.Admin(
                user_ssn=ssn,

@@ -292,7 +292,7 @@ def create_employee(employee: models.Employee) -> bool:
             # verify whether the ssn already exists in the database, if it does, don't attempt
             # to perform an SQL insertion
             #     -> as insert is expensive because of the class to tuple conversion
-            existence_check = fetch_user(user.ssn)
+            existence_check = fetch_user(employee.user_ssn)
             emp_existence_check = fetch_employee(employee.user_ssn)
             if emp_existence_check is not None or existence_check is None:
                 return False
@@ -536,6 +536,24 @@ def create_invoice(invoice: models.Invoice)->bool:
         print("[ERROR] Failed to insert invoice into the database.")
         print(traceback.format_exc())
         return False  
+def update_user(user: models.User)->bool:
+    print("[LOG] Updating user in the db.")
+    try:
+      with db.cursor() as cursor:
+          query = """Update "User" SET "SSN"=%s,address=%s,house_number=%s,street_name=%s,street_number=%s,
+          city=%s,province=%s,first_name=%s,middle_name=%s,last_name=%s,gender=%s,email_address=%s,date_of_birth=%s,
+          phone_number=%,age=%s,password=%s,dateofbirth=%s WHERE "SSN"=%s;"""
+          cursor.execute(query,[user.ssn,user.address,user.house_number,
+          user.street_name,user.street_number,user.city,user.province,user.first_name,
+          user.middle_name,user.last_name,user.gender,user.email_address,user.email_address,
+          user.date_of_birth,user.phone_number,user.age,user.password,user.dateofbirth])
+          db.commit()
+
+          return True
+    except Exception:
+        print("[ERROR] Failed to update user into the database.")
+        print(traceback.format_exc())
+        return False  
 
 if __name__ == "__main__":
     user = models.User(
@@ -567,7 +585,7 @@ if __name__ == "__main__":
       province = "Ontario",
       first_name = "Samantha", 
       middle_name = "J", 
-      last_name = "Donnell", 
+      last_name = "Donald", 
       gender = 1, 
       email_address = "samantha.d@gmail.com",
       date_of_birth = 0, 
@@ -687,3 +705,4 @@ if __name__ == "__main__":
     #fetch_dentist(1233)
     #create_procedure_category(procedure_category1)
     #create_appointment_procedure(appointmentProcedure)
+    update_user(user2)
