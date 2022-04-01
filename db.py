@@ -31,7 +31,7 @@ def fetch_user(ssn:int) -> models.User:
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"User\" WHERE \"SSN\"=%s", (ssn, ))
+            cursor.execute("SELECT * FROM public.\"User\" WHERE \"SSN\"=%s", (ssn, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -68,7 +68,7 @@ def fetch_admin(user_ssn:int) -> models.Admin:
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"Admin\" WHERE \"user_ssn\"=%s", (user_ssn, ))
+            cursor.execute("SELECT * FROM \"Receptionist\" WHERE \"user_ssn\"=%s", (user_ssn, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -292,7 +292,7 @@ def create_employee(employee: models.Employee) -> bool:
             # verify whether the ssn already exists in the database, if it does, don't attempt
             # to perform an SQL insertion
             #     -> as insert is expensive because of the class to tuple conversion
-            existence_check = fetch_user(user.ssn)
+            existence_check = fetch_user(employee.user_ssn)
             emp_existence_check = fetch_employee(employee.user_ssn)
             if emp_existence_check is not None or existence_check is None:
                 return False
@@ -363,7 +363,7 @@ def delete_admin(admin: models.Admin)->bool:
             existence_check = fetch_admin(admin.user_ssn)
             if existence_check is None:
                return False
-            cursor.execute("DELETE FROM \"Admin\" WHERE \"user_ssn\"=%s", (admin.user_ssn, ))
+            cursor.execute("DELETE FROM \"Receptionist\" WHERE \"user_ssn\"=%s", (admin.user_ssn, ))
             db.commit()
             
             return True
@@ -514,7 +514,7 @@ def create_procedure_category(procedure_category: models.ProcedureCategory)->boo
     print("[LOG] Creating procedure category in the db.")
     try:
       with db.cursor() as cursor:
-          query = """INSERT INTO "ProcedureCategory" (category_name,description,parent_category,category_id) VALUES(%s,%s,%s,%s);"""
+          query = """INSERT INTO "ProcedureCategory" (category_name,description,category_id) VALUES(%s,%s,%s);"""
           cursor.execute(query, procedure_category.to_tuple())
           db.commit()
 
@@ -523,6 +523,38 @@ def create_procedure_category(procedure_category: models.ProcedureCategory)->boo
         print("[ERROR] Failed to insert appointment procedure into the database.")
         print(traceback.format_exc())
         return False  
+def create_invoice(invoice: models.Invoice)->bool:
+    print("[LOG] Creating invoice in the db.")
+    try:
+      with db.cursor() as cursor:
+          query = """INSERT INTO "Invoice" (issue_date,total_charge,discount,penalty,id,receptionist_ssn) VALUES(%s,%s,%s,%s,%s,%s);"""
+          cursor.execute(query, invoice.to_tuple())
+          db.commit()
+
+          return True
+    except Exception:
+        print("[ERROR] Failed to insert invoice into the database.")
+        print(traceback.format_exc())
+        return False  
+def update_user(user: models.User)->bool:
+    print("[LOG] Updating user in the db.")
+    try:
+      with db.cursor() as cursor:
+          query = """Update "User" SET "SSN"=%s,address=%s,house_number=%s,street_name=%s,street_number=%s,
+          city=%s,province=%s,first_name=%s,middle_name=%s,last_name=%s,gender=%s,email_address=%s,date_of_birth=%s,
+          phone_number=%,age=%s,password=%s,dateofbirth=%s WHERE "SSN"=%s;"""
+          cursor.execute(query,[user.ssn,user.address,user.house_number,
+          user.street_name,user.street_number,user.city,user.province,user.first_name,
+          user.middle_name,user.last_name,user.gender,user.email_address,user.email_address,
+          user.date_of_birth,user.phone_number,user.age,user.password,user.dateofbirth])
+          db.commit()
+
+          return True
+    except Exception:
+        print("[ERROR] Failed to update user into the database.")
+        print(traceback.format_exc())
+        return False  
+
 if __name__ == "__main__":
     user = models.User(
         ssn = 1234, 
@@ -553,7 +585,7 @@ if __name__ == "__main__":
       province = "Ontario",
       first_name = "Samantha", 
       middle_name = "J", 
-      last_name = "Donnell", 
+      last_name = "Donald", 
       gender = 1, 
       email_address = "samantha.d@gmail.com",
       date_of_birth = 0, 
@@ -599,15 +631,15 @@ if __name__ == "__main__":
         user_ssn= 7547
     )
     branch = models.Branch (
-        name="Montana",
-        address="ro road",
-        street_name="Mission Street",
+        name="Res",
+        address="nono road",
+        street_name="Main Street",
         street_number="12",
-        city="Toronto",
+        city="Hamilton",
         province="Ontario",
         opening_time="09:00:06",
         closing_time="18:00:00",
-        id="33"
+        id=37
     )
     appointment = models.Appointment (
         id = "12",
@@ -618,10 +650,10 @@ if __name__ == "__main__":
         assigned_room=934,
         located_at=0,
         appointment_patient=1433,
-        appointment_dentist=9999
+        appointment_dentist=1233
     )
     branchManager = models.BranchManager (
-        user_ssn="7547",
+        user_ssn=7547,
         manages=0,
     )
     appointmentProcedure = models.AppointmentProcedure(
@@ -634,30 +666,43 @@ if __name__ == "__main__":
         procedure_category="wisdom teeth"
     ) 
     procedure_category1 = models.ProcedureCategory(
-        category_name="wisdom tooth surgery",
+        category_name="wisdom teeth",
         description="n/a",
-        parent_category="surgery",
         category_id="0"
+    )
+    admin1 = models.Admin (
+        user_ssn=1294,
+        works_at=0
+    )
+    invoice1 = models.Invoice(
+        issue_date="2022-03-04",
+        total_charge=34.00,
+        discount=23,
+        penalty=0,
+        id=1,
+        receptionist_ssn=1294
     )
     #create_user(user)
     #create_user(user2)
     create_user(user3)
     #delete_user(1999)
+    #create_admin(admin1)
     create_employee(employee1)
     create_branch_manager(branchManager)
     create_patient(patient1)
     #delete_patient(patient1)
-    
+    #create_invoice(invoice1)
     #delete_employee(employee1)
     
     #create_employee(employee1)
     #create_dentist(dentist1)
     #delete_user(user3)
     #create_branch(branch)
-    #add_appointment(appointment)
+    #create_appointment(appointment)
     #delete_appointment(appointment)
     #delete_branch(branch)
     #fetch_employee(1294)
     #fetch_dentist(1233)
     #create_procedure_category(procedure_category1)
     #create_appointment_procedure(appointmentProcedure)
+    update_user(user2)

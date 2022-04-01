@@ -7,7 +7,18 @@ $(document).ready(function(){
             $("#patient-data").addClass("hidden");
         }
     });
-
+    $('#is-employee').click(function(){
+        if($(this).prop("checked") == true){
+            $("#employeetype-data").removeClass("hidden");
+            $("#employee-data").removeClass("hidden");
+        }
+        else if($(this).prop("checked") == false){
+            $("#employeetype-data").addClass("hidden");
+            $("#employee-data").addClass("hidden");
+            $("#dentist-data").addClass("hidden");
+        }
+    });
+   
     $('#is-dentist').click(function(){
         if($(this).prop("checked") == true){
             $("#employee-data").removeClass("hidden");
