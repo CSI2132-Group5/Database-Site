@@ -1,3 +1,5 @@
+from cgitb import text
+from tokenize import String
 from flask_login import UserMixin
 from dataclasses import dataclass
 
@@ -72,6 +74,7 @@ class User(UserMixin):
             row[13],
             int(row[14]),
             row[15],
+           # datetime.datetime.strptime(row[16], "%Y-%m-%d") if row[16] != None else None
             datetime.strftime(row[16], "%Y-%m-%d") if row[16] != None else None
         )
         
@@ -96,7 +99,7 @@ class Employee:
     
     @staticmethod
     def from_postgres(row: list):
-        return Admin(
+        return Employee(
             int(row[5]),    # user_ssn
             row[0],         # role
             row[1],         # type 
@@ -118,7 +121,7 @@ class Patient:
     
     @staticmethod
     def from_postgres(row: list):
-        return Admin(
+        return Patient(
             int(row[0]),    # user_ssn
             row[1]          # insurance_company
         )
@@ -156,9 +159,9 @@ class Dentist:
     
     @staticmethod
     def from_postgres(row: list):
-        return Admin(
-            row[1],         # specialty
-            int(row[0]),    # user ssn
+        return Dentist(
+            row[0],         # specialty
+            int(row[1]),    # user ssn
             int(row[2])     # works at
         )
         
@@ -175,7 +178,114 @@ class BranchManager:
     
     @staticmethod
     def from_postgres(row: list):
-        return Admin(
+        return BranchManager(
             int(row[1]),
             int(row[0])
         )
+
+@dataclass
+class Branch:
+   name:String 
+   address:String
+   street_name:String
+   street_number:int
+   city: String # primary key
+   province: String
+   opening_time: datetime
+   closing_time: datetime
+   id: int
+   def to_tuple(self):
+       return (
+           self.name,
+           self.address,
+           self.street_name,
+           self.street_number,
+           self.city,
+           self.province,
+           self.opening_time,
+           self.closing_time,
+           self.id
+       )
+
+@dataclass
+class Appointment:
+   id: int
+   date:int
+   start_time:int
+   end_time:int
+   status: int 
+   assigned_room: int
+   located_at: int
+   appointment_patient: int
+   appointment_dentist: int
+   def to_tuple(self):
+       return (
+           self.id,
+           self.date,
+           self.start_time,
+           self.end_time,
+           self.status,
+           self.assigned_room,
+           self.located_at,
+           self.appointment_patient,
+           self.appointment_dentist
+       )
+@dataclass
+class AppointmentProcedure: 
+  procedure_code: int
+  procedure_type: int
+  tooth_number: int
+  description: text
+  appointment_id: int
+  id: int
+  procedure_category: text
+  def to_tuple(self):
+       return (
+           self.procedure_code,
+           self.procedure_type,
+           self.tooth_number,
+           self.description,
+           self.appointment_id,
+           self.id,
+           self.procedure_category,
+       )
+
+@dataclass
+class DentalAppliance:
+  id: int
+  type: text
+  def to_tuple(self):
+       return (
+           self.id,
+           self.type
+       )
+
+@dataclass
+class ProcedureCategory:
+    category_name: text
+    description: text
+    category_id: int
+    def to_tuple(self):
+       return (
+           self.category_name,
+           self.description,
+           self.category_id
+       )
+
+@dataclass
+class Invoice:
+    issue_date:datetime
+    total_charge: float
+    discount:int
+    penalty:int
+    id:int
+    receptionist_ssn:int
+    def to_tuple(self):
+       return (
+       self.issue_date,
+       self.total_charge,
+       self.discount,
+       self.penalty,
+       self.id,
+       self.receptionist_ssn
+       )

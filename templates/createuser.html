@@ -71,11 +71,14 @@
                         <div class="m-1">
                             <h5 class="font-light">Address</h5>
                             <input name="address" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('address') }}" {% endif %}>
-                            
                         </div>
                         <div class="m-1">
                             <h5 class="font-light">Street Name</h5>
                             <input name="street-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('street-name') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Street Number</h5>
+                            <input name="street-number" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('street-number') }}" {% endif %}>
                         </div>
                         <div class="m-1">
                             <h5 class="font-light">House Number</h5>
@@ -151,12 +154,18 @@
                     <h5 class="font-light mb-2">User Permissions</h5>
                     <input type="checkbox" id="is-patient" name="is-patient" value="1">
                     <label for="is-patient">Patient</label><br>
+                    
+                    <input type="checkbox" id="is-employee" name="is-employee" value="1">
+                    <label for="is-employee">Employee</label><br>
+        
+                    <div id = "employeetype-data" class="m1 hidden">
                     <input type="checkbox" id="is-dentist" name="is-dentist" value="1">
                     <label for="is-dentist">Dentist</label><br>
                     <input type="checkbox" id="is-admin" name="is-admin" value="1">
                     <label for="is-admin">Admin</label><br>
                     <input type="checkbox" id="is-manager" name="is-manager" value="1">
                     <label for="is-manager">Branch Manager</label><br>
+                   </div>
                 </div>
                 <div id="patient-data" class="m-1 hidden"> <!-- Patient Specific Requirements -->
                     <h5 class="font-light">Insurance Company</h5>
@@ -165,6 +174,16 @@
                 <div id="employee-data" class="m-1 hidden"> <!-- Data that can apply to any employee-->
                     <h5 class="font-light">Works At</h5> <!-- also seen as "manages" -->
                     <input name="works-at" type="number" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('works-at') }}" {% endif %}>
+                    <h5 class="font-light">Role</h5> 
+                    <input name="role" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('role') }}" {% endif %}>
+                    <h5 class="font-light">Type</h5> 
+                    <input name="type" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('type') }}" {% endif %}>
+                    <h5 class="font-light">Salary</h5> 
+                    <input name="salary" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('salary') }}" {% endif %}>
+                    <h5 class="font-light">Shift Start</h5> 
+                    <input name="shift-start" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('shift-start') }}" {% endif %}>
+                    <h5 class="font-light">Shift End</h5> 
+                    <input name="shift-end" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('shift-end') }}" {% endif %}>
                 </div>
                 <div id="dentist-data" class="m-1 hidden"> <!-- Dentist Specific Requirements -->
                     <h5 class="font-light">Specialty</h5>

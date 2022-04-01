@@ -16,8 +16,9 @@ from flask_login import (
 from flask_login.utils import login_required
 from flask_wtf import CSRFProtect
 
-from db import authenticate_user, fetch_user, create_user
-
+from db import authenticate_user, fetch_user, create_user,fetch_users,create_admin,create_dentist,create_employee,create_patient,create_branch_manager
+import models
+import hashlib
 from datetime import datetime
 import re
 
@@ -127,7 +128,25 @@ def create_user_page():
                 invalid_address = True
         else:
             invalid_address = True
-            
+
+        if (request.form.get("street-number") != ""):
+            street_number = int(request.form.get("street-number"))
+            # ensure that we have not entered a negative house number (I don't think anyone has this)
+            if street_number < 0:
+                invalid_address = True
+        else:
+            invalid_address = True
+        
+        if (request.form.get("city") != ""):
+            city = (request.form.get("city"))
+        else:
+            invalid_address= True
+        
+        if (request.form.get("province") != ""):
+            province = (request.form.get("province"))
+        else:
+            invalid_address = True
+
         invalid_password = False
         password = request.form.get("password")
         # just check to make sure the password isn't empty and that it's at least 4 characters long
@@ -157,7 +176,7 @@ def create_user_page():
         if (email == "") or (not re.match("^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$", email)):
             invalid_email = True
         
-        # if one of the user constraints fail (as defined bellow) let the user know this
+        # if one of the user constraints fail (as defined below) let the user know this
         invalid_role = False
         
         is_patient = False
@@ -166,22 +185,32 @@ def create_user_page():
             insurance = request.form.get("insurance")
         
         is_dentist = False
-        if ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
+        if ("is-employee" in request.form) and ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
             is_dentist = True
             works_at = request.form.get("works-at")
+            role = request.form.get("role")
+            type = request.form.get("type")
+            salary = request.form.get("salary")
+            shift_start = request.form.get("shift-start")
+            shift_end = request.form.get("shift-end")
             specialty = request.form.get("specialty")
             
         is_admin = False
         # an admin cannot be a dentist, and a dentist cannot be an admin
-        if (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form):
+        if ("is-employee" in request.form) and (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
             is_admin = True
             works_at = request.form.get("works-at")
+            role = request.form.get("role")
+            type = request.form.get("type")
+            salary = request.form.get("salary")
+            shift_start = request.form.get("shift-start")
+            shift_end = request.form.get("shift-end")
         else:
             invalid_role = True
         
         is_manager = False
         # a branch manager must be either an admin or a dentist
-        if ("is-manager" in request.form) and (is_admin or is_dentist):
+        if ("is-employee" in request.form) and ("is-manager" in request.form) and (is_admin or is_dentist):
             is_manager = True   
             manages = works_at
         else:
@@ -205,16 +234,69 @@ def create_user_page():
             # give all the data in the form is valid, submit it to postgres
             
             # TODO - submit a user to the postgres db
-            
+    
+          create_user(models.User(
+            ssn=ssn,
+            address=address,
+            house_number=house_number,
+            street_name=street_name,
+            street_number=street_number,
+            city=city,
+            province=province,
+            first_name=first_name,
+            middle_name=middle_name,
+            last_name=last_name,
+            gender=gender,
+            email_address=email,
+            date_of_birth=0,
+            phone_number=phone_number,
+            age=age,
+            password=str(hashlib.sha256(password.encode('utf-8')).hexdigest()),
+            dateofbirth=date_of_birth
+        )
+        )
+        if is_admin or is_dentist or is_manager:
+           create_employee(models.Employee(
+               user_ssn=ssn,
+               role=role,
+               type=type,
+               salary=salary,
+               shift_start=shift_start,
+               shift_end=shift_end
+           ))
+        if is_admin:
+            create_admin(models.Admin(
+               user_ssn=ssn,
+               works_at=works_at 
+            )
+            )
+        if is_dentist:
+            create_dentist(models.Dentist (
+               specialty=specialty,
+               user_ssn=ssn,
+               works_at=works_at
+            )
+            )
+        if is_manager:
+            create_branch_manager(models.BranchManager(
+               manages=manages,
+               user_ssn=ssn
+            )
+            )
+        if is_patient:
+            create_patient(models.Patient(
+              user_ssn=ssn,
+              insurance_company=insurance 
+            ))
+        
             # no error has been generated, display that the user creation was successful
-            return render_template(
+        return render_template(
                 "createuser.html", 
                 success=True,
                 previous_form=request.form
-            )
+        )
     else:
         return render_template("createuser.html")
-
 
 @app.route('/dentist/createprocedure', methods=["GET", "POST"])
 @login_required
@@ -305,6 +387,7 @@ def create_procedure_page():
             )
     else:
         return render_template("createprocedure.html")
+
 
 @app.route('/admin/createappointment', methods=["GET", "POST"])
 @login_required
@@ -419,6 +502,16 @@ def create_appointment_page():
             )
     else:
         return render_template("createappointment.html")
+
+@app.route('/admin/viewuser', methods=["GET", "POST"])
+@login_required
+def view_user_page():
+    
+    return render_template(
+        "users.html", 
+         users=fetch_users()
+    )
+
 
 if __name__ == "__main__":
     app.run()
