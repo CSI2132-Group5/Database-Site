@@ -56,7 +56,7 @@ def fetch_patient_records():
 
 ###################################
 
-# Employee queries
+# User queries
 def fetch_user(ssn:int) -> models.User:
     print("[LOG] Fetching User from DB.")
     try:
