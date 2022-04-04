@@ -160,8 +160,8 @@ class Dentist:
     @staticmethod
     def from_postgres(row: list):
         return Dentist(
-            row[0],         # specialty
-            int(row[1]),    # user ssn
+            int(row[1]),         # specialty
+            row[0],    # user ssn
             int(row[2])     # works at
         )
         
@@ -185,16 +185,16 @@ class BranchManager:
 
 @dataclass
 class Branch:
-   name:String 
-   address:String
-   street_name:String
-   street_number:int
-   city: String # primary key
-   province: String
-   opening_time: datetime
-   closing_time: datetime
-   id: int
-   def to_tuple(self):
+    name:String 
+    address:String
+    street_name:String
+    street_number:int
+    city: String # primary key
+    province: String
+    opening_time: datetime
+    closing_time: datetime
+    id: int
+    def to_tuple(self):
        return (
            self.name,
            self.address,
@@ -205,7 +205,20 @@ class Branch:
            self.opening_time,
            self.closing_time,
            self.id
-       )
+        )
+    @staticmethod
+    def from_postgres(row: list):
+        return Branch(
+            row[0],
+            row[1],
+            row[2],
+            row[3],
+            row[4],
+            row[5],
+            row[6],
+            row[7],
+            int(row[8])
+        )
 
 @dataclass
 class Appointment:

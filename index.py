@@ -16,7 +16,21 @@ from flask_login import (
 from flask_login.utils import login_required
 from flask_wtf import CSRFProtect
 
-from db import authenticate_user, fetch_user, create_user,fetch_users,create_admin,create_dentist,create_employee,create_patient,create_branch_manager
+from db import (
+    authenticate_user,
+    fetch_branch,
+    fetch_dentist, 
+    fetch_user, 
+    create_user,
+    fetch_users,
+    create_admin,
+    create_dentist,
+    create_employee,
+    create_patient,
+    create_branch_manager,
+    fetch_appointments,
+    fetch_branch_id
+)
 import models
 import hashlib
 from datetime import datetime
@@ -503,6 +517,32 @@ def create_appointment_page():
     else:
         return render_template("createappointment.html")
 
+@app.route('/admin/viewappointments', methods=["GET", "POST"])
+@login_required
+def view_appointments_page():
+    appointments = fetch_appointments()
+    
+    appointments_prime = []
+    # update IDs to show plaintext first/last names that will be easier for
+    # the user to read on the HTML render
+    for appointment in appointments:
+        appointment_prime = appointment[0:6]
+        # update the branch field, having branch id is ~ bad ui
+        branch = fetch_branch_id(appointment[6])
+        
+        # update the user field, we don't want to display their ID ~ bad ui
+        client = fetch_user(appointment[7])
+        client_name_c =  f"{client.first_name} {client.last_name}"  # concatenate the client's name
+        # update the dentist field, we don't want to display their ID ~ bad ui
+        print(fetch_dentist(appointment[8]))
+        dentist = fetch_user(fetch_dentist(appointment[8]).user_ssn)
+        print(dentist)
+        dentist_name_c = f"{dentist.first_name} {dentist.last_name}"  # concatenate the dentist's name
+        appointments_prime.append(appointment_prime + (branch.address, client_name_c, dentist_name_c))
+        
+    # return the appointments data to Jinja2 and render it in a table
+    return render_template("viewappointments.html", appointments=appointments_prime)
+    
 @app.route('/admin/viewuser', methods=["GET", "POST"])
 @login_required
 def view_user_page():

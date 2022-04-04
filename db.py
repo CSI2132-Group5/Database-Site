@@ -45,8 +45,6 @@ def fetch_user(ssn:int) -> models.User:
     except Exception:
         print("[ERROR] Failed to fetch user account.")
         print(traceback.format_exc())
-def fetch_dentist(user_ssn:int) -> models.Dentist:
-    print("[LOG] Fetching Dentist from DB.")
 
 def create_patient_chart():
     try:
