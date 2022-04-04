@@ -8,7 +8,7 @@
 {% block content %}
 <div class="m-4">
     {% if success == True %}
-    <div id="description-warning" class="success-box hidden"> <!-- login error box -->
+    <div id="description-warning" class="success-box hidden"> <!-- error box -->
         <box-icon name='x' color='#fdfbfb' ></box-icon>
         <h3 class="ml-0.5">Success! A procedure with id {{ previous_form.get('procedure_id') }} has been added to the database.</h3>
     </div>
@@ -18,7 +18,7 @@
             <div> <!-- left side of form -->
                 <div>
                     {% if invalid_category == True %}
-                        <div id="category-warning" class="error-box hidden"> <!-- login error box -->
+                        <div id="category-warning" class="error-box hidden"> <!-- error box -->
                             <box-icon name='x' color='#fdfbfb' ></box-icon>
                             <h3 class="ml-0.5">Category field is empty</h3>
                         </div>
@@ -32,7 +32,7 @@
                 </div>
                 <div class="mt-5">
                     {% if invalid_procedure_id == True %}
-                        <div id="procedure_id-warning" class="error-box hidden"> <!-- login error box -->
+                        <div id="procedure_id-warning" class="error-box hidden"> <!-- error box -->
                             <box-icon name='x' color='#fdfbfb' ></box-icon>
                             <h3 class="ml-0.5">Procedure Id must be a number greater than 0</h3>
                         </div>
@@ -48,7 +48,7 @@
                 </div>
                 <div class="mt-5">
                     {% if invalid_procedure_code == True %}
-                        <div id="procedure_code-warning" class="error-box hidden"> <!-- login error box -->
+                        <div id="procedure_code-warning" class="error-box hidden"> <!-- error box -->
                             <box-icon name='x' color='#fdfbfb' ></box-icon>
                             <h3 class="ml-0.5">Procedure code must have a length of 15</h3>
                         </div>
@@ -64,7 +64,7 @@
 
                 <div class="mt-5">
                     {% if invalid_tooth_number == True %}
-                        <div id="tooth_number-warning" class="error-box hidden"> <!-- login error box -->
+                        <div id="tooth_number-warning" class="error-box hidden"> <!-- error box -->
                             <box-icon name='x' color='#fdfbfb' ></box-icon>
                             <h3 class="ml-0.5">Tooth number must be between 1-32 inclusively</h3>
                         </div>
@@ -82,7 +82,7 @@
             <div class="ml-5 pl-10 border-l-2 border-gray-200"> <!-- right side of form -->
                 <div>
                     {% if invalid_description == True %}
-                        <div id="description-warning" class="error-box hidden"> <!-- login error box -->
+                        <div id="description-warning" class="error-box hidden"> <!-- error box -->
                             <box-icon name='x' color='#fdfbfb' ></box-icon>
                             <h3 class="ml-0.5">Procedure description is empty</h3>
                         </div>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="mt-5">
                     {% if invalid_appointment_id == True %}
-                        <div id="appointment_id-warning" class="error-box hidden"> <!-- login error box -->
+                        <div id="appointment_id-warning" class="error-box hidden"> <!-- error box -->
                             <box-icon name='x' color='#fdfbfb' ></box-icon>
                             <h3 class="ml-0.5">Appointment Id must be a number greater than 0</h3>
                         </div>
@@ -111,7 +111,7 @@
                 <div class="mt-5">
                    
                     {% if invalid_procedure_type == True %}
-                        <div id="procedure_type-warning" class="error-box hidden"> <!-- login error box -->
+                        <div id="procedure_type-warning" class="error-box hidden"> <!-- error box -->
                             <box-icon name='x' color='#fdfbfb' ></box-icon>
                             <h3 class="ml-0.5">Procedure type is an illegal value</h3>
                         </div>
