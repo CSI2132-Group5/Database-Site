@@ -1,0 +1,109 @@
+{% extends "dashboard.html" %}
+
+{% block title %}Create Branch{% endblock %}
+{% block page_title %}Create Branch{% endblock %}
+{% block page_description %}Administrators can create new Dental Clinic Branches.{% endblock %}
+
+
+{% block content %}
+<div class="m-4">
+    {% if success == True %}
+    <div id="description-warning" class="success-box hidden"> <!-- login error box -->
+        <box-icon name='x' color='#fdfbfb' ></box-icon>
+        <h3 class="ml-0.5">Success! A Branch with {{ previous_form.get('branch_id') }} has been added to the database.</h3>
+    </div>
+    {% endif %}
+    <form method="post">
+        <div class="flex">
+            <div>
+                <div class="flex mb-1">
+                    <div>
+                        {% if invalid_branch_id == True %}
+                            <div id="branch_id-warning" class="error-box hidden"> <!-- login error box -->
+                                <box-icon name='x' color='#fdfbfb' ></box-icon>
+                                <h3 class="ml-0.5">Branch ID must be greater than 0.</h3>
+                            </div>
+                        {% endif %}
+                        <div class="flex">
+                            <div class="m-1">
+                                <h5 class="font-light">Branch ID</h5>
+                                <input name="branch_id" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('branch_id') }}" {% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        {% if invalid_branch_name == True %}
+                            <div id="branch_name-warning" class="error-box hidden ml-5"> <!-- login error box -->
+                                <box-icon name='x' color='#fdfbfb' ></box-icon>
+                                <h3 class="ml-0.5">Branch Name is empty.</h3>
+                            </div>
+                        {% endif %}
+                        <div class="flex">
+                            <div class="m-1">
+                                <h5 class="font-light">Branch Name</h5>
+                                <input name="branch_name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('branch_name') }}" {% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    {% if invalid_address == True %}
+                        <div id="address-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">One address field is empty</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex">
+                        <div class="m-1">
+                            <h5 class="font-light">Address</h5>
+                            <input name="address" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('address') }}" {% endif %}>    
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Street Name</h5>
+                            <input name="street_name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('street_name') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Street Number</h5>
+                            <input name="street_number" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('street_number') }}" {% endif %}>
+                        </div>
+                    </div>
+                    <div class="flex mt-5">
+                        <div class="m-1">
+                            <h5 class="font-light">City</h5>
+                            <input name="city" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('city') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Province</h5>
+                            <input name="province" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('province') }}" {% endif %}>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <div class="ml-5 pl-5 border-l-2 border-gray-200">
+                <div>
+                    {% if invalid_opening_time == True %}
+                        <div id="opening_time-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Opening Time is invalid.</h3>
+                        </div>
+                        {% endif %}
+                        <h5 class="font-light">Opening Time</h5>
+                        <input name="opening_time" type="time" class="input-box" {% if previous_form %} value="{{ previous_form.get('opening_time') }}" {% endif %}>
+                </div>
+                <div>
+                    {% if invalid_closing_time == True %}
+                        <div id="closing_time-warning" class="error-box hidden mt-8"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Closing Time is invalid.</h3>
+                        </div>
+                        {% endif %}
+                        <h5 class="font-light">Closing Time</h5>
+                        <input name="closing_time" type="time" class="input-box" {% if previous_form %} value="{{ previous_form.get('closing_time') }}" {% endif %}>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input id="login-submit" type="submit" class="ml-1 mt-10 pl-5 pr-5 pt-1 pb-1 rounded-sm bg-charcoal-700 hover:bg-green-300 text-gray-50 transition duration-500 ease-in-out">
+    </form>
+</div>
+{% endblock %}

@@ -314,5 +314,77 @@ def view_user_page():
          users=fetch_users()
     )
 
+@app.route('/admin/createbranch', methods=["GET", "POST"])
+@login_required
+def create_branch_page():
+    if request.method == "POST":
+
+        invalid_branch_id = False
+        branch_id=request.form.get("branch_id")
+
+        # ensure the branch id has a value of 0 or greater
+        if (branch_id == "") or (int(request.form.get("branch_id")) <= 0):
+            print(branch_id)
+            invalid_branch_id = True
+
+        invalid_branch_name = False
+        branch_name=request.form.get("branch_name")
+
+        if (branch_name == ""):
+            print(branch_name)
+            invalid_branch_name = True
+
+        invalid_address = False  # will be marked as true if anything has been submitted empty
+        address = request.form.get("address")
+        street_name = request.form.get("street_name")
+        # verify that the address and street-name are not empty strings
+        if (address == "") or (street_name == ""):
+            invalid_address = True
+        # house # can be sent as '', so if that is being sent to use attempting to convert this to an int
+        # right away will create a str->int type conversion error (validate this first)
+        if (request.form.get("street_number") != ""):
+            street_number = int(request.form.get("street_number"))
+            # ensure that we have not entered a negative house number (I don't think anyone has this)
+            if street_number < 0:
+                invalid_address = True
+
+        city = request.form.get("province")
+        province = request.form.get("city")
+
+        if (province == "") or (city == ""):
+            invalid_address = True
+        else:
+            invalid_address = True
+
+        invalid_opening_time = False
+        opening_time = request.form.get("opening_time")
+        if (opening_time == ""):
+            invalid_opening_time = True
+
+        invalid_closing_time = False
+        closing_time = request.form.get("closing_time")
+        if (closing_time == ""):
+            invalid_closing_time = True
+
+        # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
+        if invalid_branch_id or invalid_branch_name or invalid_address or invalid_opening_time or invalid_closing_time:
+            return render_template(
+                "createbranch.html",
+                invalid_branch_id=invalid_branch_id,
+                invalid_branch_name=invalid_branch_name,
+                invalid_address=invalid_address,
+                invalid_opening_time=invalid_opening_time,
+                invalid_closing_time=invalid_closing_time,
+                previous_form=request.form,
+            )
+    else:
+        return render_template("createbranch.html")
+    
+@app.route('/admin/viewbranches', methods=["GET", "POST"])
+@login_required
+def view_branches_page():
+    
+    return render_template("branches.html")
+
 if __name__ == "__main__":
     app.run()

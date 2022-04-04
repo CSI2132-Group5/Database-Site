@@ -1,0 +1,33 @@
+{% extends "dashboard.html" %}
+
+{% block page_title %}View Branches{% endblock %}
+
+<div class="m-4">
+   
+    <div id="name-warning" class="success-box hidden"> <!-- login error box -->
+        <box-icon name='x' color='#fdfbfb' ></box-icon>
+    </div>
+
+    <div class="flex">
+        <div> 
+            <div class="content">
+                {% block content %}
+                    <table class="table">
+                    <thead>
+                        <tr>
+                          <th scope="col">Branch ID</th>
+                          <th scope="col">Branch Name</th>
+                          <th scope="col">Address</th>
+                          <th scope="col">Street Name</th>
+                          <th scope="col">Street Number</th>
+                          <th scope="col">City</th>
+                          <th scope="col">Province</th>
+                          <th scope="col">Opening Time</th>
+                          <th scope="col">Closing Time</th>
+                        </tr>
+                    </thead>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
