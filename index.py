@@ -31,10 +31,11 @@ from db import (
     fetch_appointments,
     fetch_branch_id
 )
-import models
-import hashlib
+
+from utils import user_permission_level
+
+import models, hashlib, re
 from datetime import datetime
-import re
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -92,16 +93,12 @@ def dashboard():
 @login_required
 def create_user_page():
     if request.method == "POST":
-        
         invalid_name = False  # will be marked as true if anything has been submitted empty
         first_name = request.form.get("first-name")
         middle_name = request.form.get("middle-name")
         last_name = request.form.get("last-name")
         # ensure none of the first/middle/last name entries are blank
         if (first_name == "") or (middle_name == "") or (last_name == ""):
-            print(first_name)
-            print(middle_name)
-            print(last_name)
             invalid_name = True
             
         invalid_age = False
@@ -310,6 +307,11 @@ def create_user_page():
                 previous_form=request.form
         )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+        
         return render_template("createuser.html")
 
 @app.route('/dentist/createprocedure', methods=["GET", "POST"])
@@ -400,6 +402,11 @@ def create_procedure_page():
                 previous_form=request.form
             )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.DENTIST) or (permission == models.PermissionLevel.DENTIST_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+        
         return render_template("createprocedure.html")
 
 
@@ -515,6 +522,11 @@ def create_appointment_page():
                 previous_form=request.form
             )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+            
         return render_template("createappointment.html")
 
 @app.route('/admin/viewappointments', methods=["GET", "POST"])
@@ -526,6 +538,7 @@ def view_appointments_page():
     # update IDs to show plaintext first/last names that will be easier for
     # the user to read on the HTML render
     for appointment in appointments:
+        
         appointment_prime = appointment[0:6]
         # update the branch field, having branch id is ~ bad ui
         branch = fetch_branch_id(appointment[6])
@@ -537,6 +550,10 @@ def view_appointments_page():
         # update the user field, we don't want to display their ID ~ bad ui
         client = fetch_user(appointment[7])
         if client != None:
+            # we only want clients to be able to view their own records, therefore
+            # if they are a client ~ block out all other client records
+            if (user_permission_level(current_user.ssn) == models.PermissionLevel.PATIENT) and (client.ssn != current_user.ssn):
+                continue
             client_name_c =  f"{client.first_name} {client.last_name}"  # concatenate the client's name
         else:
             client_name_c = "ERROR"
@@ -550,12 +567,15 @@ def view_appointments_page():
         
         appointments_prime.append(appointment_prime + (branch_name, client_name_c, dentist_name_c))
         
-    # return the appointments data to Jinja2 and render it in a table
-    return render_template("viewappointments.html", appointments=appointments_prime)
+    return render_template("viewappointments.html", appointments=appointments_prime, permission=user_permission_level(current_user.ssn))
     
 @app.route('/admin/viewuser', methods=["GET", "POST"])
 @login_required
 def view_user_page():
+    permission = user_permission_level(current_user.ssn)
+    if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+        return redirect(url_for('dashboard'))
+        # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
     
     return render_template(
         "users.html", 
