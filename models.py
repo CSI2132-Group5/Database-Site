@@ -289,3 +289,28 @@ class Invoice:
        self.id,
        self.receptionist_ssn
        )
+
+class ResponsibleParty:
+    user_ssn: int
+    responsible_for: int
+    def to_tuple(self):
+        return (
+            self.user_ssn,
+            self.responsible_for
+        )
+@dataclass
+class Review:
+    employee_professionalism: int
+    communication: int
+    cleanliness: int
+    value: int
+    user_ssn: int
+    def to_tuple(self):
+        return (
+            self.user_ssn,
+            self.value,
+            self.cleanliness,
+            self.communication,
+            self.employee_professionalism
+        )
+>>>>>>> remotes/origin/yier
