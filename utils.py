@@ -4,7 +4,7 @@ from db import (
     fetch_admin,
     fetch_patient
 )
-from models import Dentist, PermissionLevel
+from models import PermissionLevel
 
 def user_permission_level(ssn: int) -> PermissionLevel:
     # first ensure that the ssn exists within the database
@@ -42,6 +42,5 @@ def user_permission_level(ssn: int) -> PermissionLevel:
             # they exist within the system as a user, they MUST
             # be a patient ONLY
             permission_level = PermissionLevel.PATIENT
-                
     
     return permission_level

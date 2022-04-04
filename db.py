@@ -373,7 +373,7 @@ def fetch_admin(user_ssn:int) -> models.Admin:
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"Admin\" WHERE \"user_ssn\"=%s", (user_ssn, ))
+            cursor.execute("SELECT * FROM \"Receptionist\" WHERE \"user_ssn\"=%s", (user_ssn, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -396,7 +396,7 @@ def delete_admin(admin: models.Admin)->bool:
             if existence_check is None:
                return False
             
-            cursor.execute("DELETE FROM \"Admin\" WHERE \"user_ssn\"=%s", (admin.user_ssn, ))
+            cursor.execute("DELETE FROM \"Receptionist\" WHERE \"user_ssn\"=%s", (admin.user_ssn, ))
             db.commit()
             
             return True
