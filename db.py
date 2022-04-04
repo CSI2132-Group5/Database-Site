@@ -536,24 +536,64 @@ def create_invoice(invoice: models.Invoice)->bool:
         print("[ERROR] Failed to insert invoice into the database.")
         print(traceback.format_exc())
         return False  
-def update_user(user: models.User)->bool:
-    print("[LOG] Updating user in the db.")
+def update_user(user: models.User,patient:models.Patient)->bool:
+    print("[LOG] Updating patient in the db.")
     try:
       with db.cursor() as cursor:
-          query = """Update "User" SET "SSN"=%s,address=%s,house_number=%s,street_name=%s,street_number=%s,
+          query = """UPDATE "User" SET "SSN"=%s,address=%s,house_number=%s,street_name=%s,street_number=%s,
           city=%s,province=%s,first_name=%s,middle_name=%s,last_name=%s,gender=%s,email_address=%s,date_of_birth=%s,
-          phone_number=%,age=%s,password=%s,dateofbirth=%s WHERE "SSN"=%s;"""
-          cursor.execute(query,[user.ssn,user.address,user.house_number,
+          phone_number=%s,age=%s,password=%s,dateofbirth=%s WHERE \"SSN\"=%s;"""
+          cursor.execute(query,(user.ssn,user.address,user.house_number,
           user.street_name,user.street_number,user.city,user.province,user.first_name,
-          user.middle_name,user.last_name,user.gender,user.email_address,user.email_address,
-          user.date_of_birth,user.phone_number,user.age,user.password,user.dateofbirth])
+          user.middle_name,user.last_name,user.gender,user.email_address,user.date_of_birth,user.phone_number,user.age,user.password,user.dateofbirth,user.ssn,))
           db.commit()
-
+          query_two = """UPDATE "Patient" SET user_ssn=%s,insurance_company=%s WHERE \"user_ssn\"=%s;"""
+          cursor.execute(query_two,(patient.user_ssn,patient.insurance_company,patient.user_ssn,))
+          db.commit()
           return True
     except Exception:
-        print("[ERROR] Failed to update user into the database.")
+        print("[ERROR] Failed to update patient in the database.")
         print(traceback.format_exc())
         return False  
+
+def fetch_branches()->models.Branch:
+    print("[LOG] Fetching all branches from the DB.")
+    try: 
+        with db.cursor() as cursor:
+            cursor.execute("SELECT * FROM \"Branch\"")
+            db_response = cursor.fetchall()
+            
+            return db_response
+    except Exception:
+        print("[ERROR] Failed to fetch all branches.")
+        print(traceback.format_exc())
+        return None
+
+def fetch_appointment_procedures()->models.AppointmentProcedure:
+    print("[LOG] Fetching all appointment procedures from the DB.")
+    try: 
+        with db.cursor() as cursor:
+            cursor.execute("SELECT * FROM \"AppointmentProcedure\"")
+            db_response = cursor.fetchall()
+            
+            return db_response
+    except Exception:
+        print("[ERROR] Failed to fetch all appointment procedures.")
+        print(traceback.format_exc())
+        return None
+
+def fetch_appointments()->models.Appointment:
+    print("[LOG] Fetching all appointments from the DB.")
+    try: 
+        with db.cursor() as cursor:
+            cursor.execute("SELECT * FROM \"Appointment\"")
+            db_response = cursor.fetchall()
+            
+            return db_response
+    except Exception:
+        print("[ERROR] Failed to fetch all appointments.")
+        print(traceback.format_exc())
+        return None
 
 if __name__ == "__main__":
     user = models.User(
@@ -585,13 +625,13 @@ if __name__ == "__main__":
       province = "Ontario",
       first_name = "Samantha", 
       middle_name = "J", 
-      last_name = "Donald", 
+      last_name = "Dennis", 
       gender = 1, 
       email_address = "samantha.d@gmail.com",
       date_of_birth = 0, 
       phone_number = "6138977890", 
       age = 30, 
-      password = "samantha123",
+      password = "f6ea0f717a4641deddaf2060f0ea63ad9aca7fc580fcf5535b9443913ee4e9d6",
       dateofbirth="1992-06-06"
     )
     patient1 = models.Patient(
@@ -705,4 +745,8 @@ if __name__ == "__main__":
     #fetch_dentist(1233)
     #create_procedure_category(procedure_category1)
     #create_appointment_procedure(appointmentProcedure)
-    update_user(user2)
+    update_user(user2,patient1)
+    print(fetch_appointment_procedures())
+    print(fetch_appointments())
+    print(fetch_branches())
+    print(fetch_users())
