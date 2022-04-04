@@ -1,0 +1,185 @@
+{% extends "dashboard.html" %}
+
+{% block title %}Create Appointment{% endblock %}
+{% block page_title %}Create Appointment{% endblock %}
+{% block page_description %}Administrators can create new Appointments.{% endblock %}
+
+
+{% block content %}
+<div class="m-4">
+    {% if success == True %}
+    <div id="description-warning" class="success-box hidden"> <!-- error box -->
+        <box-icon name='x' color='#fdfbfb' ></box-icon>
+        <h3 class="ml-0.5">Success! An appointment with id {{ previous_form.get('appointment_id') }} has been added to the database.</h3>
+    </div>
+    {% endif %}
+    <form method="post">
+        <div class="flex">
+            <div> <!-- left side of form -->
+                <div class="mt-5">
+                    {% if invalid_appointment_id == True %}
+                        <div id="appointment_id-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Appointment Id must be a number greater than 0</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Appointment Id</h5>
+                            <input name="appointment_id" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('appointment_id') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    {% if invalid_start_time == True %}
+                        <div id="start_time-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Start time is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Start Time</h5>
+                            <input name="start_time" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('start_time') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_assigned_room == True %}
+                        <div id="status-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Assigned room is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                   
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Assigned Room</h5>
+                            <input name="assigned_room" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('assigned_room') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_patient_id == True %}
+                        <div id="patient_id-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Patient Id must be a number greater than 0</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Patient Id</h5>
+                            <input name="patient_id" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('patient_id') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_status == True %}
+                        <div id="status-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Status is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                   
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Appointment Type</h5>
+                            <select name="appointment_type" id="appointment_type" class="input-box" {% if previous_form %} value="{{ previous_form.get('appointment_type') }}" {% endif %}>
+                                <option value="0">Check Up</option>
+                                <option value="1">Surgery</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="ml-5 pl-10 border-l-2 border-gray-200"> <!-- right side of form -->
+
+                <div class="mt-5">      
+                    {% if invalid_appointment_date == True %}
+                    <div id="appointment_date-warning" class="error-box hidden"> <!-- error box -->
+                        <box-icon name='x' color='#fdfbfb' ></box-icon>
+                        <h3 class="ml-0.5">Date is an illegal value</h3>
+                    </div>
+                {% endif %}              
+                    <div class="flex mt-5">
+                        <div class="m-1">
+                            <h5 class="font-light">Date</h5>
+                            <input name="appointment_date" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('appointment_date') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    {% if invalid_end_time == True %}
+                        <div id="end_time-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">End time is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">End Time</h5>
+                            <input name="end_time" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('end_time') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_located_at == True %}
+                        <div id="located_at-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Location is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                   
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Location</h5>
+                            <input name="located_at" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('located_at') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_dentist_id == True %}
+                        <div id="dentist_id-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Dentist Id must be a number greater than 0</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Dentist Id</h5>
+                            <input name="dentist_id" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('dentist_id') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_appointment_type == True %}
+                        <div id="appointment_type-warning" class="error-box hidden"> <!-- error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Appointment type is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                <div class="flex mt-1 mb-1">
+                    <div class="m-1">
+                        <h5 class="font-light">Appointment Status</h5>
+                        <select name="status" id="status" class="input-box" {% if previous_form %} value="{{ previous_form.get('status') }}" {% endif %}>
+                            <option value="0">No Show</option>
+                            <option value="1">Cancelled</option>
+                            <option value="2">Completed</option>
+                            <option value="2">Unscheduled</option>
+                        </select>
+                    </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input id="login-submit" type="submit" class="mt-10 pl-5 pr-5 pt-1 pb-1 rounded-sm bg-charcoal-700 hover:bg-green-300 text-gray-50 transition duration-500 ease-in-out">
+    </form>
+
+
+</div>
+{% endblock %}
