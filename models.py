@@ -313,4 +313,3 @@ class Review:
             self.communication,
             self.employee_professionalism
         )
->>>>>>> remotes/origin/yier
