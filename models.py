@@ -2,7 +2,7 @@ from cgitb import text
 from tokenize import String
 from flask_login import UserMixin
 from dataclasses import dataclass
-
+from enum import Enum
 from datetime import datetime
 
 @dataclass
@@ -327,3 +327,10 @@ class Review:
             self.employee_professionalism
         )
 
+class PermissionLevel(Enum):
+    DENTIST = 0
+    DENTIST_PATIENT = 1
+    ADMIN = 2
+    ADMIN_PATIENT = 3
+    PATIENT = 4,
+    NONE = 5

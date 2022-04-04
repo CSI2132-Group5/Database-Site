@@ -526,6 +526,7 @@ def view_appointments_page():
     # update IDs to show plaintext first/last names that will be easier for
     # the user to read on the HTML render
     for appointment in appointments:
+        
         appointment_prime = appointment[0:6]
         # update the branch field, having branch id is ~ bad ui
         branch = fetch_branch_id(appointment[6])
@@ -551,7 +552,7 @@ def view_appointments_page():
         appointments_prime.append(appointment_prime + (branch_name, client_name_c, dentist_name_c))
         
     # return the appointments data to Jinja2 and render it in a table
-    return render_template("viewappointments.html", appointments=appointments_prime)
+    return render_template("viewappointments.html", appointments=appointments_prime, )
     
 @app.route('/admin/viewuser', methods=["GET", "POST"])
 @login_required
