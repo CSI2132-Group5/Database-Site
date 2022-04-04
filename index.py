@@ -529,16 +529,26 @@ def view_appointments_page():
         appointment_prime = appointment[0:6]
         # update the branch field, having branch id is ~ bad ui
         branch = fetch_branch_id(appointment[6])
+        if branch != None:
+            branch_name = branch.name
+        else:
+            branch_name = "ERROR" 
         
         # update the user field, we don't want to display their ID ~ bad ui
         client = fetch_user(appointment[7])
-        client_name_c =  f"{client.first_name} {client.last_name}"  # concatenate the client's name
+        if client != None:
+            client_name_c =  f"{client.first_name} {client.last_name}"  # concatenate the client's name
+        else:
+            client_name_c = "ERROR"
+        
         # update the dentist field, we don't want to display their ID ~ bad ui
-        print(fetch_dentist(appointment[8]))
         dentist = fetch_user(fetch_dentist(appointment[8]).user_ssn)
-        print(dentist)
-        dentist_name_c = f"{dentist.first_name} {dentist.last_name}"  # concatenate the dentist's name
-        appointments_prime.append(appointment_prime + (branch.address, client_name_c, dentist_name_c))
+        if dentist != None:
+            dentist_name_c = f"{dentist.first_name} {dentist.last_name}"  # concatenate the dentist's name
+        else:
+            dentist_name_c = "ERROR"
+        
+        appointments_prime.append(appointment_prime + (branch_name, client_name_c, dentist_name_c))
         
     # return the appointments data to Jinja2 and render it in a table
     return render_template("viewappointments.html", appointments=appointments_prime)
