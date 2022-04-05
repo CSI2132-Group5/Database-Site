@@ -220,8 +220,8 @@ class Branch:
             int(row[8])
         )
 
-   @staticmethod
-   def from_postgres(row: list):
+    @staticmethod
+    def from_postgres(row: list):
         return Branch(
             row[0],
             row[1],
@@ -340,8 +340,6 @@ class Review:
             self.communication,
             self.employee_professionalism
         )
-<<<<<<< HEAD
-=======
 
 class PermissionLevel(Enum):
     DENTIST = 0
@@ -350,4 +348,3 @@ class PermissionLevel(Enum):
     ADMIN_PATIENT = 3
     PATIENT = 4,
     NONE = 5
->>>>>>> main
