@@ -12,10 +12,9 @@
         <div> 
             <div class="content">
                 {% block content %}
-                    <table class="table">
+                <table class="table">
                     <thead>
                         <tr>
-                          <th scope="col">Branch ID</th>
                           <th scope="col">Branch Name</th>
                           <th scope="col">Address</th>
                           <th scope="col">Street Name</th>
@@ -24,8 +23,42 @@
                           <th scope="col">Province</th>
                           <th scope="col">Opening Time</th>
                           <th scope="col">Closing Time</th>
+                          <th scope="col">Branch ID</th>
                         </tr>
                     </thead>
+                    {% for branch in branches %}
+                    <tr>
+                        <th scope="row">{{branch[0]}}</th>
+                        <td>{{branch[1]}}</td>
+                        <td>{{branch[2]}}</td>
+                        <td>{{branch[3]}}</td>
+                        <td>{{branch[4]}}</td>
+                        <td>{{branch[5]}}</td>
+                        <td>{{branch[6]}}</td>
+                        <td>{{branch[7]}}</td>
+                        <td>{{branch[8]}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                <style>
+                    table {
+                        font-family: arial, sans-serif;
+                        border-collapse: collapse;
+                        width: 100%;
+                    }
+                        
+                    td, th {
+                        border: 1px solid #e0e0e0;
+                        text-align: left;
+                        font-size: small;
+                        padding: 8px;
+                    }
+                        
+                    tr:nth-child(even) {
+                        background-color: #f1f1f1;
+                    }
+                </style>
                 {% endblock %}
             </div>
         </div>

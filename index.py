@@ -16,7 +16,7 @@ from flask_login import (
 from flask_login.utils import login_required
 from flask_wtf import CSRFProtect
 
-from db import authenticate_user, fetch_user, create_user,fetch_users,create_admin,create_dentist,create_employee,create_patient,create_branch_manager
+from db import authenticate_user,create_branch,fetch_user,create_user,fetch_users,create_admin,create_dentist,create_employee,create_patient,create_branch_manager,fetch_branches
 import models
 import hashlib
 from datetime import datetime
@@ -546,11 +546,13 @@ def create_branch_page():
             if street_number < 0:
                 invalid_address = True
 
-        city = request.form.get("province")
-        province = request.form.get("city")
-
-        if (province == "") or (city == ""):
-            invalid_address = True
+        if (request.form.get("city") != ""):
+            city = (request.form.get("city"))
+        else:
+            invalid_address= True
+        
+        if (request.form.get("province") != ""):
+            province = (request.form.get("province"))
         else:
             invalid_address = True
 
@@ -575,6 +577,25 @@ def create_branch_page():
                 invalid_closing_time=invalid_closing_time,
                 previous_form=request.form,
             )
+        
+        else:
+            create_branch(models.Branch(
+                name=branch_name,
+                address=address,
+                street_name=street_name,
+                street_number=street_number,
+                city=city,
+                province=province,
+                opening_time=opening_time,
+                closing_time=closing_time,
+                id=branch_id
+                )
+            )
+            return render_template(
+                "createbranch.html", 
+                success=True,
+                previous_form=request.form
+            )
     else:
         return render_template("createbranch.html")
     
@@ -582,7 +603,10 @@ def create_branch_page():
 @login_required
 def view_branches_page():
     
-    return render_template("branches.html")
+    return render_template(
+        "branches.html", 
+         branches=fetch_branches()
+    )
 
 if __name__ == "__main__":
     app.run()
