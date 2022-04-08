@@ -45,8 +45,6 @@ def fetch_user(ssn:int) -> models.User:
     except Exception:
         print("[ERROR] Failed to fetch user account.")
         print(traceback.format_exc())
-def fetch_dentist(user_ssn:int) -> models.Dentist:
-    print("[LOG] Fetching Dentist from DB.")
 
 def create_patient_chart():
     try:
@@ -78,26 +76,6 @@ def fetch_patient_records():
 ###################################
 
 # User queries
-def fetch_user(ssn:int) -> models.User:
-    print("[LOG] Fetching User from DB.")
-    try:
-        
-        with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"User\" WHERE \"SSN\"=%s", (ssn, ))
-            db_response = cursor.fetchall()
-            
-            # this would imply either the ssn does not exist in the postgres or the unique
-            # key constaints in the database has broken causing duplicate columns
-            if (not db_response) or (len(db_response) != 1):
-                return  # user does not exist
-            
-            return models.User.from_postgres(db_response[0])
-            
-    except Exception:
-        print("[ERROR] Failed to fetch user account.")
-        print(traceback.format_exc())
-        return False
-
 def authenticate_user(username:str, password:str) -> models.User:
     print("[LOG] Authenticating User with db.")
     try:
@@ -255,7 +233,7 @@ def fetch_patient(user_ssn:int) -> models.Patient:
             # key constaints in the database has broken causing duplicate columns
             if (not db_response) or (len(db_response) != 1):
                 return  # user does not exist
-            
+           
             return models.Patient.from_postgres(db_response[0])
     except Exception:
         print("[ERROR] Failed to fetch patient account.")
@@ -277,6 +255,20 @@ def delete_patient(patient: models.Patient)->bool:
         print("[ERROR] Failed to delete patient from the database.")
         print(traceback.format_exc())
         return False
+
+def fetch_patients():
+    print("[LOG] Fetching all patients from the DB.")
+    try: 
+        with db.cursor() as cursor:
+            cursor.execute("SELECT * FROM public.\"User\" as u JOIN \"Patient\" as p ON u.\"SSN\"=p.user_ssn") 
+            db_response = cursor.fetchall()
+            
+            return db_response
+            
+    except Exception:
+        print("[ERROR] Failed to fetch all patient accounts.")
+        print(traceback.format_exc())
+        return None
 
 ###################################
 
@@ -375,7 +367,7 @@ def fetch_admin(user_ssn:int) -> models.Admin:
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"Admin\" WHERE \"user_ssn\"=%s", (user_ssn, ))
+            cursor.execute("SELECT * FROM \"Receptionist\" WHERE \"user_ssn\"=%s", (user_ssn, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -398,7 +390,7 @@ def delete_admin(admin: models.Admin)->bool:
             if existence_check is None:
                return False
             
-            cursor.execute("DELETE FROM \"Admin\" WHERE \"user_ssn\"=%s", (admin.user_ssn, ))
+            cursor.execute("DELETE FROM \"Receptionist\" WHERE \"user_ssn\"=%s", (admin.user_ssn, ))
             db.commit()
             
             return True
@@ -492,7 +484,7 @@ def fetch_branch_id(id:string) -> models.Branch:
         print("[ERROR] Failed to fetch Branch id.")
         print(traceback.format_exc())
         return False
-        
+
 def fetch_branches()->models.Branch:
     print("[LOG] Fetching all branches from the DB.")
     try: 
@@ -519,7 +511,7 @@ def fetch_branch(city:string) -> models.Branch:
             if (not db_response) or (len(db_response) != 1):
                 return  # user does not exist
             
-            return models.Review.from_postgres(db_response[0])
+            return models.Branch.from_postgres(db_response[0])
             
     except Exception:
         print("[ERROR] Failed to fetch Branch.")
@@ -662,7 +654,7 @@ def fetch_appointment_procedure_id(id:int) -> models.AppointmentProcedure:
             return models.AppointmentProcedure.from_postgres(db_response[0])
             
     except Exception:
-        print("[ERROR] Failed to fetch procedur category.")
+        print("[ERROR] Failed to fetch procedure category.")
         print(traceback.format_exc())
         return False
 
@@ -867,11 +859,11 @@ def create_review(review: models.Review)->bool:
     print("[LOG] Creating Review in the db.")
     try:
       with db.cursor() as cursor:
-            review_existence_check = fetch_patient(review.user_ssn)
-            if review_existence_check is not None:
+            patient_existence_check = fetch_patient(review.user_ssn)
+            if patient_existence_check is None:
                 return False
             
-            query = """INSERT INTO "Review" (employee_professionalism,communication,cleanliness,value,user_ssn) VALUES(,%s,%s,%s,%s,%s);"""
+            query = """INSERT INTO "Review" (employee_professionalism,communication,cleanliness,value,user_ssn) VALUES(%s,%s,%s,%s,%s);"""
             cursor.execute(query, review.to_tuple())
             db.commit()
 
@@ -981,9 +973,10 @@ if __name__ == "__main__":
         street_number="12",
         city="Hamilton",
         province="Ontario",
+        id=37,
         opening_time="09:00:06",
-        closing_time="18:00:00",
-        id=37
+        closing_time="18:00:00"
+       
     )
     appointment = models.Appointment (
         id = "12",
@@ -999,6 +992,10 @@ if __name__ == "__main__":
     branchManager = models.BranchManager (
         user_ssn=7547,
         manages=0,
+    )
+    admin1 = models.Admin(
+        user_ssn=1234,
+        works_at=0
     )
     appointmentProcedure = models.AppointmentProcedure(
         procedure_code=22,
@@ -1026,22 +1023,31 @@ if __name__ == "__main__":
         id=1,
         receptionist_ssn=1294
     )
+    review1 = models.Review (
+        employee_professionalism=5,
+        communication=5,
+        cleanliness=5,
+        value=5,
+        user_ssn=999999999
+    )
     #create_user(user)
     #create_user(user2)
-    create_user(user3)
+   # create_user(user3)
     #delete_user(1999)
     #create_admin(admin1)
-    create_employee(employee1)
-    create_branch_manager(branchManager)
-    create_patient(patient1)
+    #create_employee(employee1)
+   # create_branch_manager(branchManager)
+    #create_patient(patient1)
     #delete_patient(patient1)
     #create_invoice(invoice1)
     #delete_employee(employee1)
-    
+    create_admin(admin1)
     #create_employee(employee1)
     #create_dentist(dentist1)
     #delete_user(user3)
-    #create_branch(branch)
+    create_branch(branch)
+    print(fetch_branch_id(0))
+    create_review(review1)
     #create_appointment(appointment)
     #delete_appointment(appointment)
     #delete_branch(branch)
@@ -1049,8 +1055,8 @@ if __name__ == "__main__":
     #fetch_dentist(1233)
     #create_procedure_category(procedure_category1)
     #create_appointment_procedure(appointmentProcedure)
-    update_user(user2,patient1)
-    print(fetch_appointment_procedures())
-    print(fetch_appointments())
-    print(fetch_branches())
-    print(fetch_users())
+    #update_user(user2,patient1)
+   # print(fetch_appointment_procedures())
+    #print(fetch_appointments())
+   # print(fetch_branches())
+   # print(fetch_users())
