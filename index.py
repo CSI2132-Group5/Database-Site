@@ -31,14 +31,11 @@ from db import (
     create_patient,
     create_branch_manager,
     fetch_appointments,
-<<<<<<< HEAD
     fetch_branch_id,
     create_branch,
-    fetch_branches
-=======
+    fetch_branches,
     fetch_appointment_procedures,
     fetch_branch_id
->>>>>>> main
 )
 
 from utils import user_permission_level
