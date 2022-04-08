@@ -220,6 +220,20 @@ class Branch:
             int(row[8])
         )
 
+    @staticmethod
+    def from_postgres(row: list):
+        return Branch(
+            row[0],
+            row[1],
+            row[2],
+            int(row[3]),
+            row[4],
+            row[5],
+            row[6],
+            row[7],
+            row[8]
+        )
+
 @dataclass
 class Appointment:
    id: int

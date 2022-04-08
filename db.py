@@ -491,14 +491,14 @@ def fetch_branch_id(id:string) -> models.Branch:
         print(traceback.format_exc())
         return False
         
-def fetch_branches()->models.Branch:
+def fetch_branches() -> models.Branch:
     print("[LOG] Fetching all branches from the DB.")
     try: 
         with db.cursor() as cursor:
             cursor.execute("SELECT * FROM \"Branch\"")
             db_response = cursor.fetchall()
-            
             return db_response
+
     except Exception:
         print("[ERROR] Failed to fetch all branches.")
         print(traceback.format_exc())
@@ -517,7 +517,7 @@ def fetch_branch(city:string) -> models.Branch:
             if (not db_response) or (len(db_response) != 1):
                 return  # user does not exist
             
-            return models.Review.from_postgres(db_response[0])
+            return models.Branch.from_postgres(db_response[0])
             
     except Exception:
         print("[ERROR] Failed to fetch Branch.")
