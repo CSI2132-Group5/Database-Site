@@ -18,6 +18,8 @@ from flask_wtf import CSRFProtect
 
 from db import (
     authenticate_user,
+    create_appointment,
+    create_appointment_procedure,
     fetch_branch,
     fetch_dentist, 
     fetch_user, 
@@ -29,6 +31,7 @@ from db import (
     create_patient,
     create_branch_manager,
     fetch_appointments,
+    fetch_appointment_procedures,
     fetch_branch_id
 )
 
@@ -392,15 +395,23 @@ def create_procedure_page():
             )
         else:
             # give all the data in the form is valid, submit it to postgres
-            
-            # TODO - submit a procedure to the postgres db
-            
-            # no error has been generated, display that the procedure creation was successful
-            return render_template(
-                "createprocedure.html", 
-                success=True,
-                previous_form=request.form
-            )
+    
+          create_appointment_procedure(models.AppointmentProcedure(
+            procedure_code=procedure_code,
+            procedure_type=procedure_type,
+            tooth_number=tooth_number,
+            description=description,
+            appointment_id=appointment_id,
+            id=procedure_id,
+            procedure_category=category,
+        )
+        )
+        # no error has been generated, display that the procedure creation was successful
+        return render_template(
+            "createprocedure.html", 
+            success=True,
+            previous_form=request.form
+        )
     else:
         permission = user_permission_level(current_user.ssn)
         if not ((permission == models.PermissionLevel.DENTIST) or (permission == models.PermissionLevel.DENTIST_PATIENT)):
@@ -511,16 +522,26 @@ def create_appointment_page():
 
             )
         else:
-            # give all the data in the form is valid, submit it to postgres
-            
-            # TODO - submit an appointment to the postgres db
-            
-            # no error has been generated, display that the appointment creation was successful
-            return render_template(
-                "createappointment.html", 
-                success=True,
-                previous_form=request.form
-            )
+            #  all the data in the form is valid, submit it to postgres
+    
+          create_appointment(models.Appointment(
+            id=appointment_id,
+            date=appointment_date,
+            start_time=start_time,
+            end_time=end_time,
+            status=status,
+            assigned_room=assigned_room,
+            located_at=located_at,
+            appointment_patient=patient_id,
+            appointment_dentist=dentist_id,
+        )
+        )
+        # no error has been generated, display that the appointment creation was successful
+        return render_template(
+            "createappointment.html", 
+            success=True,
+            previous_form=request.form
+        )
     else:
         permission = user_permission_level(current_user.ssn)
         if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
@@ -580,6 +601,15 @@ def view_user_page():
     return render_template(
         "users.html", 
          users=fetch_users()
+    )
+
+@app.route('/dentist/viewprocedures', methods=["GET", "POST"])
+@login_required
+def view_procedure_page():
+    
+    return render_template(
+        "viewprocedures.html", 
+         procedures=fetch_appointment_procedures()
     )
 
 
