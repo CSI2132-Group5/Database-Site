@@ -16,7 +16,7 @@ from flask_login import (
 from flask_login.utils import login_required
 from flask_wtf import CSRFProtect
 
-from db import authenticate_user, fetch_user, create_user,fetch_users,create_admin,create_dentist,create_employee,create_patient,create_branch_manager
+from db import authenticate_user, delete_patient, fetch_user, create_user,fetch_users,create_admin,create_dentist,create_employee,create_patient,create_branch_manager,fetch_patients, delete_patient, update_user
 import models
 import hashlib
 from datetime import datetime
@@ -511,6 +511,177 @@ def view_user_page():
         "users.html", 
          users=fetch_users()
     )
+
+@app.route('/admin/viewpatient', methods=["GET", "POST"])
+@login_required
+def view_patient_page():
+    if request.method == "POST":
+        
+        invalid_name = False  # will be marked as true if anything has been submitted empty
+        first_name = request.form.get("first-name")
+        middle_name = request.form.get("middle-name")
+        last_name = request.form.get("last-name")
+        # ensure none of the first/middle/last name entries are blank
+        if (first_name == "") or (middle_name == "") or (last_name == ""):
+            print(first_name)
+            print(middle_name)
+            print(last_name)
+            invalid_name = True
+        
+        invalid_insurance = False
+        insurance_company = request.form.get("insurance-company")
+        if (insurance_company==""):
+            invalid_insurance = True
+
+        invalid_age = False
+        gender = int(request.form.get("gender"))
+        # ensure that the geneder is a (0) male, (1) female, or (2) other
+        if (gender < 0) or (gender > 2):
+            invalid_age = True
+        # the date of birth is sent via HTTP in the format YYYY-MM-DD, we need to convert to datetime
+        try:
+            date_of_birth = datetime.strptime(request.form.get("date-birth"), "%Y-%m-%d")
+        except ValueError as ve:
+            date_of_birth = None
+        # age can be sent as '', so if that is being sent to use attempting to convert this to an int
+        # right away will create a str->int type conversion error (validate this first)
+        if (date_of_birth != None) and (request.form.get("age") != ""):
+            age = int(request.form.get("age"))
+            # we want to perform integer devision of the days elapsed (by 365) to determine whether the
+            # number of elapsed years since present matches the age given/entered by/for the client
+            years_difference = (datetime.now() - date_of_birth).days // 365
+            # also ensure that the client is NOT under 13 years old
+            if (age < 13) or (age != years_difference):
+                invalid_age = True
+        else:
+            invalid_age = True
+        
+        invalid_address = False  # will be marked as true if anything has been submitted empty
+        address = request.form.get("address")
+        street_name = request.form.get("street-name")
+        # verify that the address and street-name are not empty strings
+        if (address == "") or (street_name == ""):
+            invalid_address = True
+        # house # can be sent as '', so if that is being sent to use attempting to convert this to an int
+        # right away will create a str->int type conversion error (validate this first)
+        if (request.form.get("house-number") != ""):
+            house_number = int(request.form.get("house-number"))
+            # ensure that we have not entered a negative house number (I don't think anyone has this)
+            if house_number < 0:
+                invalid_address = True
+        else:
+            invalid_address = True
+
+        if (request.form.get("street-number") != ""):
+            street_number = int(request.form.get("street-number"))
+            # ensure that we have not entered a negative house number (I don't think anyone has this)
+            if street_number < 0:
+                invalid_address = True
+        else:
+            invalid_address = True
+        
+        if (request.form.get("city") != ""):
+            city = (request.form.get("city"))
+        else:
+            invalid_address= True
+        
+        if (request.form.get("province") != ""):
+            province = (request.form.get("province"))
+        else:
+            invalid_address = True
+
+        invalid_password = False
+        password = request.form.get("password")
+        # just check to make sure the password isn't empty and that it's at least 4 characters long
+        # otherwise this can be considered a "weak" password choice
+        if (password == "") or (len(password) < 4):
+            invalid_password = True
+        
+        invalid_ssn = False
+        # first check that the ssn is valid otherwise the int->str type conversion will fail
+        if (request.form.get("ssn") != ""):
+            ssn = int(request.form.get("ssn"))  # this will be used when we try and submit it to postgres
+            # an SSN must be 9 characters long according to the Canadian government standard
+            if len(request.form.get("ssn")) != 9:
+                invalid_ssn = True
+        else:
+            invalid_ssn = True
+            
+        invalid_phone = False
+        phone_number = request.form.get("phone-number")
+        # regex found @ https://stackoverflow.com/questions/5294314/python-get-number-of-years-that-have-passed-from-date-string
+        if not re.match("(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})", phone_number):
+            invalid_phone = True
+            
+        invalid_email = False
+        email = request.form.get("email")
+        # regex found @ https://regexlib.com/Search.aspx?k=email&AspxAutoDetectCookieSupport=1
+        if (email == "") or (not re.match("^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$", email)):
+            invalid_email = True
+        
+        # if one of the user constraints fail (as defined below) let the user know this
+        invalid_role = False
+        
+        
+        
+        # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
+        if invalid_name or invalid_address or invalid_age or invalid_password or invalid_phone or invalid_ssn or invalid_insurance:
+            return render_template(
+                "patients.html",
+                invalid_name=invalid_name,
+                invalid_address=invalid_address,
+                invalid_age=invalid_age,
+                invalid_password=invalid_password,
+                invalid_phone=invalid_phone,
+                invalid_ssn=invalid_ssn,
+                invalid_email=invalid_email,
+                invalid_role=invalid_role,
+                previous_form=request.form,
+            )
+        else:
+            # give all the data in the form is valid, submit it to postgres
+            
+            # TODO - submit a user to the postgres db
+    
+         """     update_user(models.User(
+            ssn=ssn,
+            address=address,
+            house_number=house_number,
+            street_name=street_name,
+            street_number=street_number,
+            city=city,
+            province=province,
+            first_name=first_name,
+            middle_name=middle_name,
+            last_name=last_name,
+            gender=gender,
+            email_address=email,
+            date_of_birth=0,
+            phone_number=phone_number,
+            age=age,
+            password=str(hashlib.sha256(password.encode('utf-8')).hexdigest()),
+            dateofbirth=date_of_birth
+        ),
+        models.Patient(
+            user_ssn=ssn,
+            insurance_company=insurance_company
+        )
+        ) """
+        
+         delete_patient(models.Patient(
+            user_ssn=ssn,
+            insurance_company=insurance_company
+        ))
+            # no error has been generated, display that the user creation was successful
+        return render_template(
+        "patients.html", 
+         patients=fetch_patients()
+         )
+    else:
+        return render_template(
+        "patients.html", 
+        patients=fetch_patients()
+         )
 
 
 if __name__ == "__main__":

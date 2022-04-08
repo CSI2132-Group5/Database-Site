@@ -1,0 +1,402 @@
+{% extends "dashboard.html" %} 
+{% block page_title %}View Patients{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1"> -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style type="text/css">
+/*body {
+   color: #404E67;
+  background: #F5F7FA; 
+  font-family: 'Open Sans', sans-serif;
+ }*/
+ .table-wrapper {
+  width: 700px;
+  margin: 30px auto;
+        /* background: #fff; */
+        padding: 20px; 
+        box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    }
+    .table-title {
+        padding-bottom: 10px;
+        margin: 0 0 10px;
+    }
+    .table-title h2 {
+        margin: 6px 0 0;
+        /* font-size: 22px; */
+    }
+    /* .table-title .add-new {
+        float: right;
+        height: 30px;
+        font-weight: bold;
+        font-size: 12px;
+        text-shadow: none;
+        min-width: 100px;
+        border-radius: 50px;
+        line-height: 13px;
+    }
+   .table-title .add-new i {
+        margin-right: 4px;
+    } */
+
+    table.table {
+        table-layout:auto;
+    }
+    /* table.table tr th, table.table tr td {
+         border-color: #e9e9e9; 
+    } */
+    table.table th i {
+        font-size: 13px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+    table.table th:last-child {
+        width: 90px;
+    }
+    table.table td a {
+        cursor: pointer;
+        display: inline-block;
+        margin: 0 5px;
+        min-width: 24px;
+    }   
+    
+    table.table td a.edit {
+        color: #FFC107;
+    }
+    table.table td a.delete {
+        color: #E34724;
+    }
+    table.table td i {
+        font-size: 19px;
+    }
+    
+ /*    table.table td a.add i {
+        font-size: 24px;
+     margin-right: -1px;
+        position: relative;
+        top: 3px;
+    }    */ 
+    table.table .form-control {
+        height: 32px;
+        line-height: 32px;
+        box-shadow: none;
+        border-radius: 2px;
+    }
+    
+    table.table .form-control.error {
+       border-color: #f50000;
+    }
+    
+    table.table td .add {
+       display: none;
+    }
+</style>
+
+
+<div class="m-4">
+   
+    <div id="name-warning" class="success-box hidden"> <!-- login error box -->
+        <box-icon name='x' color='#fdfbfb' ></box-icon>
+    </div>
+   
+       <div class="m-4">
+        <form method="post">
+        <div class="flex">
+            <div> 
+                    <div class="content">
+                       
+                        <!-- <h1>{% block title %} Users{% endblock %}</h1> -->
+                        <table class=""table>
+                        <thead>
+                            <tr>
+                              <th scope="col">SSN</th>
+                              <th scope="col">Address</th>
+                              <th scope="col">House Number</th>
+                              <th scope="col">Street Name</th>
+                              <th scope="col">Street Number</th>
+                              <th scope="col">City</th>
+                              <th scope="col">Province</th>
+                              <th scope="col">First Name</th>
+                              <th scope="col">Middle Name</th>
+                              <th scope="col">Last Name</th>
+                              <th scope="col">Gender</th>
+                              <th scope="col">Email Address</th>
+                              <th scope="col">Date of Birth</th>
+                              <th scope="col">Phone Number</th>
+                              <th scope="col">Age</th>
+                              <th scope="col">Password</th>
+                              <th scope="col">Insurance Company</th>
+                              <th scope="col">Actions</th>
+                            </tr>
+                          </thead>
+                          
+                          <tbody>
+                        {% for patient in patients %}
+                            <!-- <div class='user' > -->
+                               <tr>
+                                {% if invalid_name == True %}
+                                <div id="name-warning" class="error-box hidden"> <!-- login error box -->
+                                    <box-icon name='x' color='#fdfbfb' ></box-icon>
+                                    <h3 class="ml-0.5">A name field is empty</h3>
+                                </div>
+                                 {% endif %}
+                                 <td name = "ssn" id = "ssn">{{patient[0]}}</td>
+                                 <td name ="address" id = "address">{{patient[1]}}</td>
+                                 <td name = "house-number">{{patient[2]}}</td>
+                                 <td name ="street-name" id = "street-name">{{patient[3]}}</td>
+                                 <td name = "street-number" id ="street-number">{{patient[4]}}</td>
+                                 <td name = "city" id ="city">{{patient[5]}}</td>
+                                 <td name = "province" id = "province">{{patient[6]}}</td>
+                                 <td name = "first-name" id = "first-name">{{patient[7]}}</td>
+                                 <td name = "middle-name" id = "middle-name">{{patient[8]}}</td>
+                                 <td name = "last-name" id = "last-name">{{patient[9]}}</td>
+                                 <td name = "gender" id = "gender">{{patient[10]}}</td>
+                                 <td name = "email" id = "email">{{patient[11]}}</td>
+                                 <td name = "date-birth" id = "date-birth" >{{patient[16]}}</td>
+                                 <td name = "phone-number" id = "phone-number">{{patient[13]}}</td>
+                                 <td name = "age" id = "age">{{patient[14]}}</td>
+                                 <td name = "password" id = "password">{{patient[15]}}</td>
+                                 <td name = "insurance" id ="insurance">{{patient[18]}}</td>
+                                <td>
+                                    <!-- <i class="fa fa-pencil"></i> -->
+                                    <a class="add" title="Add" data-toggle="tooltip" id="{{patient[0]}}"><i class="fa fa-user-plus"></i></a>
+                                    <a class="edit" title="Edit" data-toggle="tooltip" id="{{patient[0]}}"><i class="fa fa-pencil"></i></a>
+                                    <a class="delete" title="Delete" data-toggle="tooltip" id="{{patient[0]}}"><i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                                <script src="{{ url_for('static', filename='javascript/viewpatients.js') }}"></script>
+                                <style>
+                                    table {
+                                      font-family: arial, sans-serif;
+                                      border-collapse: collapse;
+                                      
+                                    }
+                                    
+                                    td, th {
+                                      border: 1px solid #e0e0e0;
+                                      text-align: left;
+                                      font-size: small;
+                                      padding: 8px;
+                                    }
+                                    
+                                    tr:nth-child(even) {
+                                      background-color: #f1f1f1;
+                                    }
+                                    </style> 
+                            
+                      
+                      
+                    </div>
+            </div>   
+        </div>
+</div>
+</div>
+
+
+
+</html>
+
+<div class="m-4">
+    {% if success == True %}
+    <div id="name-warning" class="success-box hidden"> <!-- login error box -->
+        <box-icon name='x' color='#fdfbfb' ></box-icon>
+        <h3 class="ml-0.5">Success! A user for {{ previous_form.get('first-name') }} {{ previous_form.get('last-name') }} has been updated in the database.</h3>
+    </div>
+    {% endif %}
+    <form method="post">
+        <div class="flex">
+            <div> <!-- left side of form -->
+                <div>
+                    {% if invalid_name == True %}
+                        <div id="name-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">A name field is empty</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex">
+                        <div class="m-1">
+                            <h5 class="font-light">First Name</h5>
+                            <input name="first-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('first-name') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Middle Name</h5>
+                            <input name="middle-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('middle-name') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Last Name</h5>
+                            <input name="last-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('last-name') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_age == True %}
+                        <div id="age-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Age is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex mt-1 mb-1">
+                        <div class="m-1">
+                            <h5 class="font-light">Gender</h5>
+                            <select name="gender" id="gender" class="input-box" {% if previous_form %} value="{{ previous_form.get('gender') }}" {% endif %}>
+                                <option value="0">Male</option>
+                                <option value="1">Female</option>
+                                <option value="2">Other</option>
+                            </select>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Age</h5>
+                            <input name="age" type="number" mind="13" class="input-box" {% if previous_form %} value="{{ previous_form.get('age') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    {% if invalid_address == True %}
+                        <div id="address-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">One address field is empty</h3>
+                        </div>
+                    {% endif %}
+                    <div class="flex">
+                        <div class="m-1">
+                            <h5 class="font-light">Address</h5>
+                            <input name="address" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('address') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Street Name</h5>
+                            <input name="street-name" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('street-name') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">Street Number</h5>
+                            <input name="street-number" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('street-number') }}" {% endif %}>
+                        </div>
+                        <div class="m-1">
+                            <h5 class="font-light">House Number</h5>
+                            <input name="house-number" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('house-number') }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex mt-5">
+                    <div class="m-1">
+                        <h5 class="font-light">City</h5>
+                        <input name="city" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('city') }}" {% endif %}>
+                    </div>
+                    <div class="m-1">
+                        <h5 class="font-light">Province</h5>
+                        <input name="province" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('province') }}" {% endif %}>
+                    </div>
+                </div>
+                <div class="flex mt-5">
+                    <div class="m-1">
+                        <h5 class="font-light">Date of Birth</h5>
+                        <input type="date" id="start" name="date-birth" min="1900-01-01" max="2010-01-01" {% if previous_form %} value="{{ previous_form.get('date-birth') }}" {% else %} value="2010-01-01"  {% endif %}>
+                    </div>
+                    <div class="m-1">
+                        {% if invalid_password == True %}
+                            <div id="password-warning" class="error-box hidden"> <!-- login error box -->
+                                <box-icon name='x' color='#fdfbfb' ></box-icon>
+                                <h3 class="ml-0.5">Password invalid</h3>
+                            </div>
+                        {% endif %}
+                        <h5 class="font-light">Password</h5>
+                        <input name="password" type="text" class="input-box">
+                    </div>
+                    <div class="m-1">
+                        {% if invalid_ssn == True %}
+                            <div id="ssn-warning" class="error-box hidden"> <!-- login error box -->
+                                <box-icon name='x' color='#fdfbfb' ></box-icon>
+                                <h3 class="ml-0.5">SSN is invalid</h3>
+                            </div>
+                        {% endif %}
+                        <h5 class="font-light">SSN</h5>
+                        <input name="ssn" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('ssn') }}" {% endif %}>
+                    </div>
+                </div>
+            </div>
+            <div class="ml-5 pl-10 border-l-2 overflow-y-scroll border-gray-200"> <!-- right side of form -->
+                <div class="m-1">
+                    {% if invalid_age == True %}
+                        <div id="email-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Email is an illegal value</h3>
+                        </div>
+                    {% endif %}
+                    <h5 class="font-light">Email</h5>
+                    <input name="email" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('email') }}" {% endif %}>
+                </div>
+                <div class="m-1 mt-5">
+                    {% if invalid_phone == True %}
+                        <div id="phone-warning" class="error-box hidden"> <!-- login error box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Phone is invalid</h3>
+                        </div>
+                    {% endif %}
+                    <h5 class="font-light">Phone Number</h5>
+                    <input name="phone-number" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('phone-number') }}" {% endif %}>
+                </div> 
+                <div class="m-1 mt-9">
+                    {% if invalid_role == True %}
+                        <div id="phone-warning" class="error-box hidden"> <!-- invalid role box -->
+                            <box-icon name='x' color='#fdfbfb' ></box-icon>
+                            <h3 class="ml-0.5">Invalid User Combination or Missing Data!</h3>
+                        </div>
+                    {% endif %}
+                    <h5 class="font-light mb-2">User Permissions</h5>
+                    <input type="checkbox" id="is-patient" name="is-patient" value="1">
+                    <label for="is-patient">Patient</label><br>
+                    
+                    <input type="checkbox" id="is-employee" name="is-employee" value="1">
+                    <label for="is-employee">Employee</label><br>
+        
+                    <div id = "employeetype-data" class="m1 hidden">
+                    <input type="checkbox" id="is-dentist" name="is-dentist" value="1">
+                    <label for="is-dentist">Dentist</label><br>
+                    <input type="checkbox" id="is-admin" name="is-admin" value="1">
+                    <label for="is-admin">Admin</label><br>
+                    <input type="checkbox" id="is-manager" name="is-manager" value="1">
+                    <label for="is-manager">Branch Manager</label><br>
+                   </div>
+                </div>
+                <div id="patient-data" class="m-1 hidden"> <!-- Patient Specific Requirements -->
+                    <h5 class="font-light">Insurance Company</h5>
+                    <input name="insurance" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('insurance') }}" {% endif %}>
+                </div>
+                <div id="employee-data" class="m-1 hidden"> <!-- Data that can apply to any employee-->
+                    <h5 class="font-light">Works At</h5> <!-- also seen as "manages" -->
+                    <input name="works-at" type="number" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('works-at') }}" {% endif %}>
+                    <h5 class="font-light">Role</h5> 
+                    <input name="role" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('role') }}" {% endif %}>
+                    <h5 class="font-light">Type</h5> 
+                    <input name="type" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('type') }}" {% endif %}>
+                    <h5 class="font-light">Salary</h5> 
+                    <input name="salary" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('salary') }}" {% endif %}>
+                    <h5 class="font-light">Shift Start</h5> 
+                    <input name="shift-start" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('shift-start') }}" {% endif %}>
+                    <h5 class="font-light">Shift End</h5> 
+                    <input name="shift-end" type="text" min="0" class="input-box" {% if previous_form %} value="{{ previous_form.get('shift-end') }}" {% endif %}>
+                </div>
+                <div id="dentist-data" class="m-1 hidden"> <!-- Dentist Specific Requirements -->
+                    <h5 class="font-light">Specialty</h5>
+                    <input name="specialty" type="text" class="input-box" {% if previous_form %} value="{{ previous_form.get('specialty') }}" {% endif %}>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input id="login-submit" type="submit" class="mt-10 pl-5 pr-5 pt-1 pb-1 rounded-sm bg-charcoal-700 hover:bg-green-300 text-gray-50 transition duration-500 ease-in-out">
+    </form>
+
+    <script src="{{ url_for('static', filename='javascript/createuser.js') }}"></script>
+</div>
+{% endblock %}
