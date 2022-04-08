@@ -194,38 +194,39 @@ def create_user_page():
         if ("is-patient" in request.form) and ("insurance" in request.form):
             is_patient = True
             insurance = request.form.get("insurance")
-        
+         
         is_dentist = False
-        if ("is-employee" in request.form) and ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
-            is_dentist = True
-            works_at = request.form.get("works-at")
-            role = request.form.get("role")
-            type = request.form.get("type")
-            salary = request.form.get("salary")
-            shift_start = request.form.get("shift-start")
-            shift_end = request.form.get("shift-end")
-            specialty = request.form.get("specialty")
-            
         is_admin = False
+        is_manager = False   
         # an admin cannot be a dentist, and a dentist cannot be an admin
-        if ("is-employee" in request.form) and (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
-            is_admin = True
-            works_at = request.form.get("works-at")
-            role = request.form.get("role")
-            type = request.form.get("type")
-            salary = request.form.get("salary")
-            shift_start = request.form.get("shift-start")
-            shift_end = request.form.get("shift-end")
-        else:
-            invalid_role = True
+        if ("is-employee" in request.form):
+            if ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
+                is_dentist = True
+                works_at = request.form.get("works-at")
+                role = request.form.get("role")
+                type = request.form.get("type")
+                salary = request.form.get("salary")
+                shift_start = request.form.get("shift-start")
+                shift_end = request.form.get("shift-end")
+                specialty = request.form.get("specialty")
+            
+            if (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
+                is_admin = True
+                works_at = request.form.get("works-at")
+                role = request.form.get("role")
+                type = request.form.get("type")
+                salary = request.form.get("salary")
+                shift_start = request.form.get("shift-start")
+                shift_end = request.form.get("shift-end")
+            else:
+                invalid_role = True
         
-        is_manager = False
-        # a branch manager must be either an admin or a dentist
-        if ("is-employee" in request.form) and ("is-manager" in request.form) and (is_admin or is_dentist):
-            is_manager = True   
-            manages = works_at
-        else:
-            invalid_role = True
+            # a branch manager must be either an admin or a dentist
+            if ("is-manager" in request.form) and (is_admin or is_dentist):
+                is_manager = True   
+                manages = works_at
+            else:
+                invalid_role = True
         
         # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
         if invalid_name or invalid_address or invalid_age or invalid_password or invalid_phone or invalid_ssn or invalid_role:
@@ -243,8 +244,6 @@ def create_user_page():
             )
         else:
             # give all the data in the form is valid, submit it to postgres
-            
-            # TODO - submit a user to the postgres db
     
           create_user(models.User(
             ssn=ssn,
