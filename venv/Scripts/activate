@@ -37,7 +37,11 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
+<<<<<<< HEAD
 VIRTUAL_ENV="C:\Dev\Database-Site\venv"
+=======
+VIRTUAL_ENV="C:\Users\mount\Desktop\Projects\Database-Project\Database-Site\venv"
+>>>>>>> main
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
