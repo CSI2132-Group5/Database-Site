@@ -471,7 +471,7 @@ def delete_branch_manager(branchManager: models.BranchManager)->bool:
 ###################################
 
 # Branch queries
-def fetch_branch_id(id:string) -> models.Branch:
+def fetch_branch_id(id:int) -> models.Branch:
     print("[LOG] Fetching Branch id from DB.")
     try:
         
@@ -571,7 +571,7 @@ def create_appointment(appointment: models.Appointment)->bool:
             appointment_patient_existence_check = fetch_patient(appointment.appointment_patient)
             appointment_located_at_existence_check = fetch_branch_id(appointment.located_at)
             appointment_id_existence_check = fetch_appointment_id(appointment.id)
-            if appointment_dentist_existence_check is None or appointment_patient_existence_check is None or appointment_located_at_existence_check is None or appointment_id_existence_check is None:
+            if appointment_dentist_existence_check is None or appointment_patient_existence_check is None or appointment_located_at_existence_check is None or appointment_id_existence_check is not None:
                 return False
             
             query = """INSERT INTO "Appointment" (id,date,start_time,end_time,status,assigned_room,located_at,appointment_patient,appointment_dentist) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
@@ -602,11 +602,11 @@ def delete_appointment(appointment: models.Appointment)->bool:
         return False
 
 def fetch_appointment_id(id:int) -> models.Appointment:
-    print("[LOG] Fetching prcedure category from DB.")
+    print("[LOG] Fetching appointment from DB.")
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"AppointmentProcedure\" WHERE \"id\"=%s", (id, ))
+            cursor.execute("SELECT * FROM \"Appointment\" WHERE \"id\"=%s", (id, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -617,7 +617,7 @@ def fetch_appointment_id(id:int) -> models.Appointment:
             return models.Appointment.from_postgres(db_response[0])
             
     except Exception:
-        print("[ERROR] Failed to fetch procedur category.")
+        print("[ERROR] Failed to fetch appointment category.")
         print(traceback.format_exc())
         return False
 
@@ -984,12 +984,12 @@ if __name__ == "__main__":
         id=37
     )
     appointment = models.Appointment (
-        id = "12",
-        date="20220202",
-        start_time=9,
-        end_time=10,
-        status=0,
-        assigned_room=934,
+        id = "16",
+        date="20220302",
+        start_time=12,
+        end_time=1,
+        status=3,
+        assigned_room=93,
         located_at=0,
         appointment_patient=1433,
         appointment_dentist=1233
@@ -1052,3 +1052,4 @@ if __name__ == "__main__":
     print(fetch_appointments())
     print(fetch_branches())
     print(fetch_users())
+    create_appointment(appointment)
