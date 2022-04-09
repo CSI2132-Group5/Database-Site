@@ -16,11 +16,36 @@ from flask_login import (
 from flask_login.utils import login_required
 from flask_wtf import CSRFProtect
 
-from db import authenticate_user, delete_patient, fetch_user, create_user,fetch_users,create_admin,create_dentist,create_employee,create_patient,create_branch_manager,fetch_patients, delete_patient, update_user
-import models
-import hashlib
+
+from db import (
+    authenticate_user,
+    create_appointment,
+    create_appointment_procedure,
+    fetch_branch,
+    fetch_dentist, 
+    fetch_user, 
+    create_user,
+    fetch_users,
+    create_admin,
+    create_dentist,
+    create_employee,
+    create_patient,
+    create_branch_manager,
+    fetch_appointments,
+    fetch_branch_id,
+    create_branch,
+    fetch_branches,
+    fetch_appointment_procedures,
+    fetch_branch_id,
+    delete_patient,
+    fetch_patients,
+    update_user
+)
+
+from utils import user_permission_level
+
+import models, hashlib, re
 from datetime import datetime
-import re
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -78,16 +103,12 @@ def dashboard():
 @login_required
 def create_user_page():
     if request.method == "POST":
-        
         invalid_name = False  # will be marked as true if anything has been submitted empty
         first_name = request.form.get("first-name")
         middle_name = request.form.get("middle-name")
         last_name = request.form.get("last-name")
         # ensure none of the first/middle/last name entries are blank
         if (first_name == "") or (middle_name == "") or (last_name == ""):
-            print(first_name)
-            print(middle_name)
-            print(last_name)
             invalid_name = True
             
         invalid_age = False
@@ -296,6 +317,11 @@ def create_user_page():
                 previous_form=request.form
         )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+        
         return render_template("createuser.html")
 
 @app.route('/dentist/createprocedure', methods=["GET", "POST"])
@@ -376,16 +402,29 @@ def create_procedure_page():
             )
         else:
             # give all the data in the form is valid, submit it to postgres
-            
-            # TODO - submit a procedure to the postgres db
-            
-            # no error has been generated, display that the procedure creation was successful
-            return render_template(
-                "createprocedure.html", 
-                success=True,
-                previous_form=request.form
-            )
+    
+          create_appointment_procedure(models.AppointmentProcedure(
+            procedure_code=procedure_code,
+            procedure_type=procedure_type,
+            tooth_number=tooth_number,
+            description=description,
+            appointment_id=appointment_id,
+            id=procedure_id,
+            procedure_category=category,
+        )
+        )
+        # no error has been generated, display that the procedure creation was successful
+        return render_template(
+            "createprocedure.html", 
+            success=True,
+            previous_form=request.form
+        )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.DENTIST) or (permission == models.PermissionLevel.DENTIST_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+        
         return render_template("createprocedure.html")
 
 
@@ -490,22 +529,81 @@ def create_appointment_page():
 
             )
         else:
-            # give all the data in the form is valid, submit it to postgres
-            
-            # TODO - submit an appointment to the postgres db
-            
-            # no error has been generated, display that the appointment creation was successful
-            return render_template(
-                "createappointment.html", 
-                success=True,
-                previous_form=request.form
-            )
+            #  all the data in the form is valid, submit it to postgres
+    
+          create_appointment(models.Appointment(
+            id=appointment_id,
+            date=appointment_date,
+            start_time=start_time,
+            end_time=end_time,
+            status=status,
+            assigned_room=assigned_room,
+            located_at=located_at,
+            appointment_patient=patient_id,
+            appointment_dentist=dentist_id,
+        )
+        )
+        # no error has been generated, display that the appointment creation was successful
+        return render_template(
+            "createappointment.html", 
+            success=True,
+            previous_form=request.form
+        )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+            
         return render_template("createappointment.html")
 
-@app.route('/admin/viewuser', methods=["GET", "POST"])
+@app.route('/admin/viewappointments', methods=["GET", "POST"])
+@login_required
+def view_appointments_page():
+    appointments = fetch_appointments()
+    
+    appointments_prime = []
+    # update IDs to show plaintext first/last names that will be easier for
+    # the user to read on the HTML render
+    for appointment in appointments:
+        
+        appointment_prime = appointment[0:6]
+        # update the branch field, having branch id is ~ bad ui
+        branch = fetch_branch_id(appointment[6])
+        if branch != None:
+            branch_name = branch.name
+        else:
+            branch_name = "ERROR" 
+        
+        # update the user field, we don't want to display their ID ~ bad ui
+        client = fetch_user(appointment[7])
+        if client != None:
+            # we only want clients to be able to view their own records, therefore
+            # if they are a client ~ block out all other client records
+            if (user_permission_level(current_user.ssn) == models.PermissionLevel.PATIENT) and (client.ssn != current_user.ssn):
+                continue
+            client_name_c =  f"{client.first_name} {client.last_name}"  # concatenate the client's name
+        else:
+            client_name_c = "ERROR"
+        
+        # update the dentist field, we don't want to display their ID ~ bad ui
+        dentist = fetch_user(fetch_dentist(appointment[8]).user_ssn)
+        if dentist != None:
+            dentist_name_c = f"{dentist.first_name} {dentist.last_name}"  # concatenate the dentist's name
+        else:
+            dentist_name_c = "ERROR"
+        
+        appointments_prime.append(appointment_prime + (branch_name, client_name_c, dentist_name_c))
+        
+    return render_template("viewappointments.html", appointments=appointments_prime, permission=user_permission_level(current_user.ssn))
+    
+@app.route('/admin/viewusers', methods=["GET", "POST"])
 @login_required
 def view_user_page():
+    permission = user_permission_level(current_user.ssn)
+    if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+        return redirect(url_for('dashboard'))
+        # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
     
     return render_template(
         "users.html", 
@@ -559,11 +657,6 @@ def view_patient_page():
         invalid_address = False  # will be marked as true if anything has been submitted empty
         address = request.form.get("address")
         street_name = request.form.get("street-name")
-        # verify that the address and street-name are not empty strings
-        if (address == "") or (street_name == ""):
-            invalid_address = True
-        # house # can be sent as '', so if that is being sent to use attempting to convert this to an int
-        # right away will create a str->int type conversion error (validate this first)
         if (request.form.get("house-number") != ""):
             house_number = int(request.form.get("house-number"))
             # ensure that we have not entered a negative house number (I don't think anyone has this)
@@ -580,16 +673,6 @@ def view_patient_page():
         else:
             invalid_address = True
         
-        if (request.form.get("city") != ""):
-            city = (request.form.get("city"))
-        else:
-            invalid_address= True
-        
-        if (request.form.get("province") != ""):
-            province = (request.form.get("province"))
-        else:
-            invalid_address = True
-
         invalid_password = False
         password = request.form.get("password")
         # just check to make sure the password isn't empty and that it's at least 4 characters long
@@ -621,7 +704,6 @@ def view_patient_page():
         
         # if one of the user constraints fail (as defined below) let the user know this
         invalid_role = False
-        
         
         
         # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
@@ -682,6 +764,110 @@ def view_patient_page():
         "patients.html", 
         patients=fetch_patients()
          )
+            
+@app.route('/admin/createbranch', methods=["GET", "POST"])
+@login_required
+def create_branch_page():
+    if request.method == "POST":
+
+        invalid_branch_id = False
+        branch_id=request.form.get("branch_id")
+
+        # ensure the branch id has a value of 0 or greater
+        if (branch_id == "") or (int(request.form.get("branch_id")) <= 0):
+            print(branch_id)
+            invalid_branch_id = True
+
+        invalid_branch_name = False
+        branch_name=request.form.get("branch_name")
+
+        if (branch_name == ""):
+            print(branch_name)
+            invalid_branch_name = True
+
+        invalid_address = False  # will be marked as true if anything has been submitted empty
+        address = request.form.get("address")
+        street_name = request.form.get("street_name")
+        # verify that the address and street-name are not empty strings
+        if (address == "") or (street_name == ""):
+            invalid_address = True
+        # house # can be sent as '', so if that is being sent to use attempting to convert this to an int
+        # right away will create a str->int type conversion error (validate this first)
+        if (request.form.get("street_number") != ""):
+            street_number = int(request.form.get("street_number"))
+            # ensure that we have not entered a negative house number (I don't think anyone has this)
+            if street_number < 0:
+                invalid_address = True
+
+        if (request.form.get("city") != ""):
+            city = (request.form.get("city"))
+        else:
+            invalid_address= True
+        
+        if (request.form.get("province") != ""):
+            province = (request.form.get("province"))
+        else:
+            invalid_address = True
+
+        invalid_opening_time = False
+        opening_time = request.form.get("opening_time")
+        if (opening_time == ""):
+            invalid_opening_time = True
+
+        invalid_closing_time = False
+        closing_time = request.form.get("closing_time")
+        if (closing_time == ""):
+            invalid_closing_time = True
+
+        # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
+        if invalid_branch_id or invalid_branch_name or invalid_address or invalid_opening_time or invalid_closing_time:
+            return render_template(
+                "createbranch.html",
+                invalid_branch_id=invalid_branch_id,
+                invalid_branch_name=invalid_branch_name,
+                invalid_address=invalid_address,
+                invalid_opening_time=invalid_opening_time,
+                invalid_closing_time=invalid_closing_time,
+                previous_form=request.form,
+            )
+        
+        else:
+            create_branch(models.Branch(
+                name=branch_name,
+                address=address,
+                street_name=street_name,
+                street_number=street_number,
+                city=city,
+                province=province,
+                opening_time=opening_time,
+                closing_time=closing_time,
+                id=branch_id
+                )
+            )
+            return render_template(
+                "createbranch.html", 
+                success=True,
+                previous_form=request.form
+            )
+    else:
+        return render_template("createbranch.html")
+    
+@app.route('/admin/viewbranches', methods=["GET", "POST"])
+@login_required
+def view_branches_page():
+    
+    return render_template(
+        "branches.html", 
+         branches=fetch_branches()
+    )
+@app.route('/dentist/viewprocedures', methods=["GET", "POST"])
+@login_required
+def view_procedure_page():
+    
+    return render_template(
+        "viewprocedures.html", 
+         procedures=fetch_appointment_procedures()
+    )
 
 
 if __name__ == "__main__":

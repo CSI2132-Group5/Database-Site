@@ -1,22 +1,20 @@
-
 {% extends "dashboard.html" %}
 
 {% block page_title %}View Users{% endblock %}
 
-<div class="m-4">
+<div class="m-5">
    
     <div id="name-warning" class="success-box hidden"> <!-- login error box -->
         <box-icon name='x' color='#fdfbfb' ></box-icon>
     </div>
-   
-        <div class="flex">
-            <div> 
-                    <div class="content">
-                        {% block content %}
-                        <!-- <h1>{% block title %} Users{% endblock %}</h1> -->
-                        <table class=""table>
-                        <thead>
-                            <tr>
+
+    <div class="flex">
+        <div> 
+            <div class="content">
+                {% block content %}
+                <table class="table">
+                    <thead>
+                        <tr>
                               <th scope="col">SSN</th>
                               <th scope="col">Address</th>
                               <th scope="col">House Number</th>
@@ -33,72 +31,54 @@
                               <th scope="col">Phone Number</th>
                               <th scope="col">Age</th>
                               <th scope="col">Password</th>
-                            </tr>
-                          </thead>
-                    
-                        {% for user in users %}
-                            <!-- <div class='user' > -->
-                               <tr>
-                                <th scope="row">{{user[0]}}</th>
-                                 <td>{{user[1]}}
-                                </td> </td>
-                                <td>{{user[2]}}
-                                </td>
-                                <td>{{user[3]}}
-                                </td>
-                                <td>{{user[4]}}
-                                </td>
-                                <td>{{user[5]}}
-                                </td>
-                                <td>{{user[6]}}
-                                </td>
-                                <td>{{user[7]}}
-                                </td>
-                                <td>{{user[8]}}
-                                </td>
-                                <td>{{user[9]}}
-                                </td>
-                                <td>{{user[10]}}
-                                </td>
-                                <td>{{user[11]}}
-                                </td>
-                                <td>{{user[16]}}
-                                </td>
-                                 <td>{{user[13]}}
-                                </td>
-                                <td>{{user[14]}}
-                                </td>
-                                <td>{{user[15]}}
-                                </td>
-                                </tr>
-                                {% endfor %}
-                        </table>
-                                <style>
-                                    table {
-                                      font-family: arial, sans-serif;
-                                      border-collapse: collapse;
-                                      
-                                    }
-                                    
-                                    td, th {
-                                      border: 1px solid #e0e0e0;
-                                      text-align: left;
-                                      font-size: small;
-                                      padding: 8px;
-                                    }
-                                    
-                                    tr:nth-child(even) {
-                                      background-color: #f1f1f1;
-                                    }
-                                    </style>
-                            
-                      
-                        {% endblock %}
-                    </div>
-            
+                        </tr>
+                    </thead>
+                    {% for user in users %}
+                    <tr>
+                        <th scope="row">{{user[0]}}</th>
+                        <td>{{user[1]}}</td>
+                        <td>{{user[2]}}</td>
+                        <td>{{user[3]}}</td>
+                        <td>{{user[4]}}</td>
+                        <td>{{user[5]}}</td>
+                        <td>{{user[6]}}</td>
+                        <td>{{user[7]}}</td>
+                        <td>{{user[8]}}</td>
+                        <td>{{user[9]}}</td>
+                        <td>{{user[10]}}</td>
+                        <td>{{user[11]}}</td>
+                        <td>{{user[12]}}</td>
+                        <td>{{user[13]}}</td>
+                        <td>{{user[14]}}</td>
+                        <td>{{user[15]}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                <style>
+                    table {
+                        font-family: arial, sans-serif;
+                        border-collapse: collapse;
+                        width: 100%;
+                    }
+                        
+                    td, th {
+                        border: 1px solid #e0e0e0;
+                        text-align: left;
+                        font-size: small;
+                        padding: 8px;
+                    }
+                        
+                    tr:nth-child(even) {
+                        background-color: #f1f1f1;
+                    }
+                </style>
+                {% endblock %}
             </div>
-           
         </div>
+    </div>
 </div>
+        
+
 
 

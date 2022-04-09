@@ -1,0 +1,35 @@
+{% extends "dashboard.html" %}
+
+{% block title %}View Procedues{% endblock %}
+{% block page_title %}View Procedures{% endblock %}
+{% block page_description %}View procedures associated with a specific branch.{% endblock %}
+
+{% block content %}
+<div class="m-5">
+    <table class="content">
+        <thead class="border-2 border-charcoal-500">
+            <tr>
+              <th class="table-cell-dark" scope="col">Procedure Code</th>
+              <th class="table-cell-dark" scope="col">Procedure Type</th>
+              <th class="table-cell-dark" scope="col">Tooth Number</th>
+              <th class="table-cell-dark" scope="col">Description</th>
+              <th class="table-cell-dark" scope="col">Appointment ID</th>
+              <th class="table-cell-dark" scope="col">ID</th>
+              <th class="table-cell-dark" scope="col">Procedure Category</th>
+            </tr>
+        </thead>
+    
+        {% for procedure in procedures %}
+            <tr>
+                <th class="table-cell" scope="row">{{ procedure[0] }}</th>
+                <td class="table-cell">{{ procedure[1] }}</td>
+                <td class="table-cell">{{ procedure[2] }}</td>
+                <td class="table-cell">{{ procedure[3] }}</td>
+                <td class="table-cell">{{ procedure[4] }}</td>
+                <td class="table-cell">{{ procedure[5] }}</td>
+                <td class="table-cell">{{ procedure[6] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
