@@ -559,42 +559,43 @@ def create_appointment_page():
 @app.route('/admin/viewappointments', methods=["GET", "POST"])
 @login_required
 def view_appointments_page():
-    appointments = fetch_appointments()
-    
-    appointments_prime = []
-    # update IDs to show plaintext first/last names that will be easier for
-    # the user to read on the HTML render
-    for appointment in appointments:
-        
-        appointment_prime = appointment[0:6]
-        # update the branch field, having branch id is ~ bad ui
-        branch = fetch_branch_id(appointment[6])
-        if branch != None:
-            branch_name = branch.name
-        else:
-            branch_name = "ERROR" 
-        
-        # update the user field, we don't want to display their ID ~ bad ui
-        client = fetch_user(appointment[7])
-        if client != None:
-            # we only want clients to be able to view their own records, therefore
-            # if they are a client ~ block out all other client records
-            if (user_permission_level(current_user.ssn) == models.PermissionLevel.PATIENT) and (client.ssn != current_user.ssn):
-                continue
-            client_name_c =  f"{client.first_name} {client.last_name}"  # concatenate the client's name
-        else:
-            client_name_c = "ERROR"
-        
-        # update the dentist field, we don't want to display their ID ~ bad ui
-        dentist = fetch_user(fetch_dentist(appointment[8]).user_ssn)
-        if dentist != None:
-            dentist_name_c = f"{dentist.first_name} {dentist.last_name}"  # concatenate the dentist's name
-        else:
-            dentist_name_c = "ERROR"
-        
-        appointments_prime.append(appointment_prime + (branch_name, client_name_c, dentist_name_c))
-        
-    return render_template("viewappointments.html", appointments=appointments_prime, permission=user_permission_level(current_user.ssn))
+   appointments = fetch_appointments()
+  
+   appointments_prime = []
+   # update IDs to show plaintext first/last names that will be easier for
+   # the user to read on the HTML render
+   for appointment in appointments:
+      
+       appointment_prime = appointment[0:6]
+       # update the branch field, having branch id is ~ bad ui
+       branch = fetch_branch_id(appointment[6])
+       if branch != None:
+           branch_name = branch.name
+       else:
+           branch_name = "ERROR"
+      
+       # update the user field, we don't want to display their ID ~ bad ui
+       client = fetch_user(appointment[7])
+       if client != None:
+           # we only want clients to be able to view their own records, therefore
+           # if they are a client ~ block out all other client records
+           if (user_permission_level(current_user.ssn) == models.PermissionLevel.PATIENT) and (client.ssn != current_user.ssn):
+               continue
+           client_name_c =  f"{client.first_name} {client.last_name}"  # concatenate the client's name
+       else:
+           client_name_c = "ERROR"
+      
+       # update the dentist field, we don't want to display their ID ~ bad ui
+       dentist = fetch_user(fetch_dentist(appointment[8]).user_ssn)
+       if dentist != None:
+           dentist_name_c = f"{dentist.first_name} {dentist.last_name}"  # concatenate the dentist's name
+       else:
+           dentist_name_c = "ERROR"
+      
+       appointments_prime.append(appointment_prime + (branch_name, client_name_c, dentist_name_c))
+      
+   return render_template("viewappointments.html", appointments=appointments_prime, permission=user_permission_level(current_user.ssn))
+
     
 @app.route('/admin/viewusers', methods=["GET", "POST"])
 

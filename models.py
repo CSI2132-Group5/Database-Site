@@ -205,9 +205,9 @@ class Branch:
            self.street_number,
            self.city,
            self.province,
+           self.id,
            self.opening_time,
-           self.closing_time,
-           self.id
+           self.closing_time
         )
 
     @staticmethod
@@ -219,11 +219,11 @@ class Branch:
             int(row[3]),
             (row[4]),
             (row[5]),
-            time.strftime(row[6],'%H:%M:%S'),
+            int(row[6]),
             time.strftime(row[7],'%H:%M:%S'),
-            int(row[8])
+            time.strftime(row[8],'%H:%M:%S'),
+            
         ) 
-
 @dataclass
 class Appointment:
    id: int

@@ -465,7 +465,7 @@ def delete_branch_manager(branchManager: models.BranchManager)->bool:
 ###################################
 
 # Branch queries
-def fetch_branch_id(id:string) -> models.Branch:
+def fetch_branch_id(id:int) -> models.Branch:
     print("[LOG] Fetching Branch id from DB.")
     try:
         
@@ -544,7 +544,7 @@ def create_branch(branch: models.Branch)->bool:
             if branch_id_existence_check is not None or branch_existence_check is not None:
                 return False
             
-            query = """INSERT INTO "Branch" (name,address,street_name,street_number,city,province,opening_time,closing_time,id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
+            query = """INSERT INTO "Branch" (name,address,street_name,street_number,city,province,id,opening_time,closing_time) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
             cursor.execute(query, branch.to_tuple())
             db.commit()
 
