@@ -76,31 +76,11 @@ def fetch_patient_records():
 ###################################
 
 # User queries
-def fetch_user(ssn:int) -> models.User:
-    print("[LOG] Fetching User from DB.")
-    try:
-        
-        with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"User\" WHERE \"SSN\"=%s", (ssn, ))
-            db_response = cursor.fetchall()
-            
-            # this would imply either the ssn does not exist in the postgres or the unique
-            # key constaints in the database has broken causing duplicate columns
-            if (not db_response) or (len(db_response) != 1):
-                return  # user does not exist
-            
-            return models.User.from_postgres(db_response[0])
-            
-    except Exception:
-        print("[ERROR] Failed to fetch user account.")
-        print(traceback.format_exc())
-        return False
-
 def authenticate_user(username:str, password:str) -> models.User:
     print("[LOG] Authenticating User with db.")
     try:
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"User\" WHERE email_address like %s AND password LIKE %s", (username, password))
+            cursor.execute("SELECT * FROM public.\"User\" WHERE email_address like %s AND password LIKE %s", (username, password))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -253,7 +233,7 @@ def fetch_patient(user_ssn:int) -> models.Patient:
             # key constaints in the database has broken causing duplicate columns
             if (not db_response) or (len(db_response) != 1):
                 return  # user does not exist
-            
+           
             return models.Patient.from_postgres(db_response[0])
     except Exception:
         print("[ERROR] Failed to fetch patient account.")
@@ -275,6 +255,20 @@ def delete_patient(patient: models.Patient)->bool:
         print("[ERROR] Failed to delete patient from the database.")
         print(traceback.format_exc())
         return False
+
+def fetch_patients():
+    print("[LOG] Fetching all patients from the DB.")
+    try: 
+        with db.cursor() as cursor:
+            cursor.execute("SELECT * FROM public.\"User\" as u JOIN \"Patient\" as p ON u.\"SSN\"=p.user_ssn") 
+            db_response = cursor.fetchall()
+            
+            return db_response
+            
+    except Exception:
+        print("[ERROR] Failed to fetch all patient accounts.")
+        print(traceback.format_exc())
+        return None
 
 ###################################
 
@@ -471,7 +465,7 @@ def delete_branch_manager(branchManager: models.BranchManager)->bool:
 ###################################
 
 # Branch queries
-def fetch_branch_id(id:string) -> models.Branch:
+def fetch_branch_id(id:int) -> models.Branch:
     print("[LOG] Fetching Branch id from DB.")
     try:
         
@@ -550,7 +544,7 @@ def create_branch(branch: models.Branch)->bool:
             if branch_id_existence_check is not None or branch_existence_check is not None:
                 return False
             
-            query = """INSERT INTO "Branch" (name,address,street_name,street_number,city,province,opening_time,closing_time,id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
+            query = """INSERT INTO "Branch" (name,address,street_name,street_number,city,province,id,opening_time,closing_time) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
             cursor.execute(query, branch.to_tuple())
             db.commit()
 
@@ -571,7 +565,7 @@ def create_appointment(appointment: models.Appointment)->bool:
             appointment_patient_existence_check = fetch_patient(appointment.appointment_patient)
             appointment_located_at_existence_check = fetch_branch_id(appointment.located_at)
             appointment_id_existence_check = fetch_appointment_id(appointment.id)
-            if appointment_dentist_existence_check is None or appointment_patient_existence_check is None or appointment_located_at_existence_check is None or appointment_id_existence_check is None:
+            if appointment_dentist_existence_check is None or appointment_patient_existence_check is None or appointment_located_at_existence_check is None or appointment_id_existence_check is not None:
                 return False
             
             query = """INSERT INTO "Appointment" (id,date,start_time,end_time,status,assigned_room,located_at,appointment_patient,appointment_dentist) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
@@ -602,11 +596,11 @@ def delete_appointment(appointment: models.Appointment)->bool:
         return False
 
 def fetch_appointment_id(id:int) -> models.Appointment:
-    print("[LOG] Fetching prcedure category from DB.")
+    print("[LOG] Fetching appointment from DB.")
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"AppointmentProcedure\" WHERE \"id\"=%s", (id, ))
+            cursor.execute("SELECT * FROM \"Appointment\" WHERE \"id\"=%s", (id, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
@@ -617,7 +611,7 @@ def fetch_appointment_id(id:int) -> models.Appointment:
             return models.Appointment.from_postgres(db_response[0])
             
     except Exception:
-        print("[ERROR] Failed to fetch procedur category.")
+        print("[ERROR] Failed to fetch appointment category.")
         print(traceback.format_exc())
         return False
 
@@ -631,7 +625,7 @@ def create_appointment_procedure(appointmentProcedure: models.AppointmentProcedu
             appointment_id_category_existence_check = fetch_appointment_id(appointmentProcedure.appointment_id)
             appointment_procedure_category_existence_check = fetch_procedure_category(appointmentProcedure.procedure_category)
             appointment_procedure_existence_check = fetch_appointment_procedure_id(appointmentProcedure.id)
-            if appointment_procedure_category_existence_check is not None or appointment_procedure_existence_check is not None or appointment_id_category_existence_check is not None:
+            if appointment_procedure_category_existence_check is None or appointment_procedure_existence_check is not None or appointment_id_category_existence_check is None:
                 return False
             
             query = """INSERT INTO "AppointmentProcedure" (procedure_code,procedure_type,tooth_number,description,appointment_id,id,procedure_category) VALUES(%s,%s,%s,%s,%s,%s,%s);"""
@@ -660,7 +654,7 @@ def fetch_appointment_procedure_id(id:int) -> models.AppointmentProcedure:
             return models.AppointmentProcedure.from_postgres(db_response[0])
             
     except Exception:
-        print("[ERROR] Failed to fetch procedur category.")
+        print("[ERROR] Failed to fetch procedure category.")
         print(traceback.format_exc())
         return False
 
@@ -690,10 +684,10 @@ def create_procedure_category(procedureCategory: models.ProcedureCategory)->bool
       with db.cursor() as cursor:
             procedure_category_existence_check = fetch_branch_id(procedureCategory.category_id)
             category_name_existence_check = fetch_procedure_category(procedureCategory.category_name)
-            if procedure_category_existence_check is not None or category_name_existence_check is not None:
+            if procedure_category_existence_check is None or category_name_existence_check is not None:
                 return False
             
-            query = """INSERT INTO "ProcedureCategory" (category_name,description,parent_category,category_id) VALUES(%s,%s,%s,%s);"""
+            query = """INSERT INTO "ProcedureCategory" (category_name,description,category_id) VALUES(%s,%s,%s);"""
             cursor.execute(query, procedureCategory.to_tuple())
             db.commit()
 
@@ -762,8 +756,9 @@ def fetch_appointments()->models.Appointment:
         print("[ERROR] Failed to fetch all appointments.")
         print(traceback.format_exc())
         return None
-def fetch_procedure_category(category_name:int) -> models.ProcedureCategory:
-    print("[LOG] Fetching prcedure category from DB.")
+
+def fetch_procedure_category(category_name:string) -> models.ProcedureCategory:
+    print("[LOG] Fetching procedure category from DB.")
     try:
         
         with db.cursor() as cursor:
@@ -865,11 +860,11 @@ def create_review(review: models.Review)->bool:
     print("[LOG] Creating Review in the db.")
     try:
       with db.cursor() as cursor:
-            review_existence_check = fetch_patient(review.user_ssn)
-            if review_existence_check is not None:
+            patient_existence_check = fetch_patient(review.user_ssn)
+            if patient_existence_check is None:
                 return False
             
-            query = """INSERT INTO "Review" (employee_professionalism,communication,cleanliness,value,user_ssn) VALUES(,%s,%s,%s,%s,%s);"""
+            query = """INSERT INTO "Review" (employee_professionalism,communication,cleanliness,value,user_ssn) VALUES(%s,%s,%s,%s,%s);"""
             cursor.execute(query, review.to_tuple())
             db.commit()
 
@@ -979,17 +974,18 @@ if __name__ == "__main__":
         street_number="12",
         city="Hamilton",
         province="Ontario",
+        id=37,
         opening_time="09:00:06",
-        closing_time="18:00:00",
-        id=37
+        closing_time="18:00:00"
+       
     )
     appointment = models.Appointment (
-        id = "12",
-        date="20220202",
-        start_time=9,
-        end_time=10,
-        status=0,
-        assigned_room=934,
+        id = "16",
+        date="20220302",
+        start_time=12,
+        end_time=1,
+        status=3,
+        assigned_room=93,
         located_at=0,
         appointment_patient=1433,
         appointment_dentist=1233
@@ -997,6 +993,10 @@ if __name__ == "__main__":
     branchManager = models.BranchManager (
         user_ssn=7547,
         manages=0,
+    )
+    admin1 = models.Admin(
+        user_ssn=1234,
+        works_at=0
     )
     appointmentProcedure = models.AppointmentProcedure(
         procedure_code=22,
@@ -1010,7 +1010,12 @@ if __name__ == "__main__":
     procedure_category1 = models.ProcedureCategory(
         category_name="wisdom teeth",
         description="n/a",
-        category_id="0"
+        category_id=0
+    )
+    procedure_category2 = models.ProcedureCategory(
+        category_name="root canal",
+        description="n/a",
+        category_id=0
     )
     admin1 = models.Admin (
         user_ssn=1294,
@@ -1024,22 +1029,41 @@ if __name__ == "__main__":
         id=1,
         receptionist_ssn=1294
     )
+    review1 = models.Review (
+        employee_professionalism=5,
+        communication=5,
+        cleanliness=5,
+        value=5,
+        user_ssn=999999999
+    )
+    procedure1 = models.AppointmentProcedure(
+        procedure_code = 12,
+        procedure_type = 2,
+        tooth_number = 3,
+        description = "n/a",
+        appointment_id = 15, 
+        id = 4, 
+        procedure_category = "wisdom teeth"
+    )
+  
     #create_user(user)
     #create_user(user2)
-    create_user(user3)
+   # create_user(user3)
     #delete_user(1999)
     #create_admin(admin1)
-    create_employee(employee1)
-    create_branch_manager(branchManager)
-    create_patient(patient1)
+    #create_employee(employee1)
+   # create_branch_manager(branchManager)
+    #create_patient(patient1)
     #delete_patient(patient1)
     #create_invoice(invoice1)
     #delete_employee(employee1)
-    
+    create_admin(admin1)
     #create_employee(employee1)
     #create_dentist(dentist1)
     #delete_user(user3)
-    #create_branch(branch)
+    create_branch(branch)
+    print(fetch_branch_id(0))
+    create_review(review1)
     #create_appointment(appointment)
     #delete_appointment(appointment)
     #delete_branch(branch)
@@ -1052,3 +1076,6 @@ if __name__ == "__main__":
     print(fetch_appointments())
     print(fetch_branches())
     print(fetch_users())
+    create_appointment(appointment)
+    create_procedure_category(procedure_category2)
+    create_appointment_procedure(procedure1)
