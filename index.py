@@ -18,6 +18,8 @@ from flask_wtf import CSRFProtect
 
 from db import (
     authenticate_user,
+    create_appointment,
+    create_appointment_procedure,
     fetch_branch,
     fetch_dentist, 
     fetch_user, 
@@ -29,12 +31,17 @@ from db import (
     create_patient,
     create_branch_manager,
     fetch_appointments,
+    fetch_branch_id,
+    create_branch,
+    fetch_branches,
+    fetch_appointment_procedures,
     fetch_branch_id
 )
-import models
-import hashlib
+
+from utils import user_permission_level
+
+import models, hashlib, re
 from datetime import datetime
-import re
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -92,16 +99,12 @@ def dashboard():
 @login_required
 def create_user_page():
     if request.method == "POST":
-        
         invalid_name = False  # will be marked as true if anything has been submitted empty
         first_name = request.form.get("first-name")
         middle_name = request.form.get("middle-name")
         last_name = request.form.get("last-name")
         # ensure none of the first/middle/last name entries are blank
         if (first_name == "") or (middle_name == "") or (last_name == ""):
-            print(first_name)
-            print(middle_name)
-            print(last_name)
             invalid_name = True
             
         invalid_age = False
@@ -197,38 +200,39 @@ def create_user_page():
         if ("is-patient" in request.form) and ("insurance" in request.form):
             is_patient = True
             insurance = request.form.get("insurance")
-        
+         
         is_dentist = False
-        if ("is-employee" in request.form) and ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
-            is_dentist = True
-            works_at = request.form.get("works-at")
-            role = request.form.get("role")
-            type = request.form.get("type")
-            salary = request.form.get("salary")
-            shift_start = request.form.get("shift-start")
-            shift_end = request.form.get("shift-end")
-            specialty = request.form.get("specialty")
-            
         is_admin = False
+        is_manager = False   
         # an admin cannot be a dentist, and a dentist cannot be an admin
-        if ("is-employee" in request.form) and (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
-            is_admin = True
-            works_at = request.form.get("works-at")
-            role = request.form.get("role")
-            type = request.form.get("type")
-            salary = request.form.get("salary")
-            shift_start = request.form.get("shift-start")
-            shift_end = request.form.get("shift-end")
-        else:
-            invalid_role = True
+        if ("is-employee" in request.form):
+            if ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
+                is_dentist = True
+                works_at = request.form.get("works-at")
+                role = request.form.get("role")
+                type = request.form.get("type")
+                salary = request.form.get("salary")
+                shift_start = request.form.get("shift-start")
+                shift_end = request.form.get("shift-end")
+                specialty = request.form.get("specialty")
+            
+            if (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
+                is_admin = True
+                works_at = request.form.get("works-at")
+                role = request.form.get("role")
+                type = request.form.get("type")
+                salary = request.form.get("salary")
+                shift_start = request.form.get("shift-start")
+                shift_end = request.form.get("shift-end")
+            else:
+                invalid_role = True
         
-        is_manager = False
-        # a branch manager must be either an admin or a dentist
-        if ("is-employee" in request.form) and ("is-manager" in request.form) and (is_admin or is_dentist):
-            is_manager = True   
-            manages = works_at
-        else:
-            invalid_role = True
+            # a branch manager must be either an admin or a dentist
+            if ("is-manager" in request.form) and (is_admin or is_dentist):
+                is_manager = True   
+                manages = works_at
+            else:
+                invalid_role = True
         
         # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
         if invalid_name or invalid_address or invalid_age or invalid_password or invalid_phone or invalid_ssn or invalid_role:
@@ -246,8 +250,6 @@ def create_user_page():
             )
         else:
             # give all the data in the form is valid, submit it to postgres
-            
-            # TODO - submit a user to the postgres db
     
           create_user(models.User(
             ssn=ssn,
@@ -310,6 +312,11 @@ def create_user_page():
                 previous_form=request.form
         )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+        
         return render_template("createuser.html")
 
 @app.route('/dentist/createprocedure', methods=["GET", "POST"])
@@ -390,16 +397,29 @@ def create_procedure_page():
             )
         else:
             # give all the data in the form is valid, submit it to postgres
-            
-            # TODO - submit a procedure to the postgres db
-            
-            # no error has been generated, display that the procedure creation was successful
-            return render_template(
-                "createprocedure.html", 
-                success=True,
-                previous_form=request.form
-            )
+    
+          create_appointment_procedure(models.AppointmentProcedure(
+            procedure_code=procedure_code,
+            procedure_type=procedure_type,
+            tooth_number=tooth_number,
+            description=description,
+            appointment_id=appointment_id,
+            id=procedure_id,
+            procedure_category=category,
+        )
+        )
+        # no error has been generated, display that the procedure creation was successful
+        return render_template(
+            "createprocedure.html", 
+            success=True,
+            previous_form=request.form
+        )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.DENTIST) or (permission == models.PermissionLevel.DENTIST_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+        
         return render_template("createprocedure.html")
 
 
@@ -504,17 +524,32 @@ def create_appointment_page():
 
             )
         else:
-            # give all the data in the form is valid, submit it to postgres
-            
-            # TODO - submit an appointment to the postgres db
-            
-            # no error has been generated, display that the appointment creation was successful
-            return render_template(
-                "createappointment.html", 
-                success=True,
-                previous_form=request.form
-            )
+            #  all the data in the form is valid, submit it to postgres
+    
+          create_appointment(models.Appointment(
+            id=appointment_id,
+            date=appointment_date,
+            start_time=start_time,
+            end_time=end_time,
+            status=status,
+            assigned_room=assigned_room,
+            located_at=located_at,
+            appointment_patient=patient_id,
+            appointment_dentist=dentist_id,
+        )
+        )
+        # no error has been generated, display that the appointment creation was successful
+        return render_template(
+            "createappointment.html", 
+            success=True,
+            previous_form=request.form
+        )
     else:
+        permission = user_permission_level(current_user.ssn)
+        if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+            
         return render_template("createappointment.html")
 
 @app.route('/admin/viewappointments', methods=["GET", "POST"])
@@ -526,6 +561,7 @@ def view_appointments_page():
     # update IDs to show plaintext first/last names that will be easier for
     # the user to read on the HTML render
     for appointment in appointments:
+        
         appointment_prime = appointment[0:6]
         # update the branch field, having branch id is ~ bad ui
         branch = fetch_branch_id(appointment[6])
@@ -537,6 +573,10 @@ def view_appointments_page():
         # update the user field, we don't want to display their ID ~ bad ui
         client = fetch_user(appointment[7])
         if client != None:
+            # we only want clients to be able to view their own records, therefore
+            # if they are a client ~ block out all other client records
+            if (user_permission_level(current_user.ssn) == models.PermissionLevel.PATIENT) and (client.ssn != current_user.ssn):
+                continue
             client_name_c =  f"{client.first_name} {client.last_name}"  # concatenate the client's name
         else:
             client_name_c = "ERROR"
@@ -550,16 +590,126 @@ def view_appointments_page():
         
         appointments_prime.append(appointment_prime + (branch_name, client_name_c, dentist_name_c))
         
-    # return the appointments data to Jinja2 and render it in a table
-    return render_template("viewappointments.html", appointments=appointments_prime)
+    return render_template("viewappointments.html", appointments=appointments_prime, permission=user_permission_level(current_user.ssn))
     
 @app.route('/admin/viewuser', methods=["GET", "POST"])
 @login_required
 def view_user_page():
+    permission = user_permission_level(current_user.ssn)
+    print(permission)
+    if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+        return render_template(
+            "users.html",
+            users = [ current_user ]
+        )
     
     return render_template(
         "users.html", 
          users=fetch_users()
+    )
+
+@app.route('/admin/createbranch', methods=["GET", "POST"])
+@login_required
+def create_branch_page():
+    if request.method == "POST":
+
+        invalid_branch_id = False
+        branch_id=request.form.get("branch_id")
+
+        # ensure the branch id has a value of 0 or greater
+        if (branch_id == "") or (int(request.form.get("branch_id")) <= 0):
+            print(branch_id)
+            invalid_branch_id = True
+
+        invalid_branch_name = False
+        branch_name=request.form.get("branch_name")
+
+        if (branch_name == ""):
+            print(branch_name)
+            invalid_branch_name = True
+
+        invalid_address = False  # will be marked as true if anything has been submitted empty
+        address = request.form.get("address")
+        street_name = request.form.get("street_name")
+        # verify that the address and street-name are not empty strings
+        if (address == "") or (street_name == ""):
+            invalid_address = True
+        # house # can be sent as '', so if that is being sent to use attempting to convert this to an int
+        # right away will create a str->int type conversion error (validate this first)
+        if (request.form.get("street_number") != ""):
+            street_number = int(request.form.get("street_number"))
+            # ensure that we have not entered a negative house number (I don't think anyone has this)
+            if street_number < 0:
+                invalid_address = True
+
+        if (request.form.get("city") != ""):
+            city = (request.form.get("city"))
+        else:
+            invalid_address= True
+        
+        if (request.form.get("province") != ""):
+            province = (request.form.get("province"))
+        else:
+            invalid_address = True
+
+        invalid_opening_time = False
+        opening_time = request.form.get("opening_time")
+        if (opening_time == ""):
+            invalid_opening_time = True
+
+        invalid_closing_time = False
+        closing_time = request.form.get("closing_time")
+        if (closing_time == ""):
+            invalid_closing_time = True
+
+        # ensure that we have not generate a single error, if we have, update the HTML with the appropriate error hint
+        if invalid_branch_id or invalid_branch_name or invalid_address or invalid_opening_time or invalid_closing_time:
+            return render_template(
+                "createbranch.html",
+                invalid_branch_id=invalid_branch_id,
+                invalid_branch_name=invalid_branch_name,
+                invalid_address=invalid_address,
+                invalid_opening_time=invalid_opening_time,
+                invalid_closing_time=invalid_closing_time,
+                previous_form=request.form,
+            )
+        
+        else:
+            create_branch(models.Branch(
+                name=branch_name,
+                address=address,
+                street_name=street_name,
+                street_number=street_number,
+                city=city,
+                province=province,
+                opening_time=opening_time,
+                closing_time=closing_time,
+                id=branch_id
+                )
+            )
+            return render_template(
+                "createbranch.html", 
+                success=True,
+                previous_form=request.form
+            )
+    else:
+        return render_template("createbranch.html")
+    
+@app.route('/admin/viewbranches', methods=["GET", "POST"])
+@login_required
+def view_branches_page():
+    
+    return render_template(
+        "branches.html", 
+         branches=fetch_branches()
+    )
+@app.route('/dentist/viewprocedures', methods=["GET", "POST"])
+@login_required
+def view_procedure_page():
+    
+    return render_template(
+        "viewprocedures.html", 
+         procedures=fetch_appointment_procedures()
     )
 
 
