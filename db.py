@@ -828,7 +828,7 @@ def create_review(review: models.Review)->bool:
     try:
       with db.cursor() as cursor:
             review_existence_check = fetch_patient(review.user_ssn)
-            if review_existence_check is not None:
+            if review_existence_check is None:
                 return False
             
             query = """INSERT INTO "Review" (employee_professionalism,communication,cleanliness,value,user_ssn) VALUES(,%s,%s,%s,%s,%s);"""
