@@ -1,4 +1,5 @@
 from cgitb import text
+import string
 from tokenize import String
 from flask_login import UserMixin
 from dataclasses import dataclass
@@ -267,7 +268,7 @@ class AppointmentProcedure:
   procedure_code: int
   procedure_type: int
   tooth_number: int
-  description: text
+  description: String
   appointment_id: int
   id: int
   procedure_category: text
@@ -313,8 +314,8 @@ class DentalAppliance:
 
 @dataclass
 class ProcedureCategory:
-    category_name: text
-    description: text
+    category_name: String
+    description: String
     category_id: int
     def to_tuple(self):
        return (
@@ -401,6 +402,68 @@ class Review:
             int(row[4])
         )
 
+@dataclass
+class InsuranceClaim:
+    id: int
+    insurance_charge: int
+    invoice_id: int
+    patient_ssn: int
+    def to_tuple(self):
+        return (
+            self.id,
+            self.insurance_charge,
+            self.invoice_id,
+            self.patient_ssn
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return InsuranceClaim (
+            int(row[0]),
+            int(row[1]),
+            int(row[2]),
+            int(row[3])
+        )
+@dataclass
+class Treatment:
+    appointment_type: str
+    treatment_type: str
+    medications: str
+    symptoms: str
+    tooth: str
+    comments: str
+    employee_user_ssn: int
+    dentist_user_ssn: int
+    patient_user_ssn: int
+    treatment_time: datetime
+    def to_tuple(self):
+        return (
+            self.appointment_type,
+            self.treatment_type,
+            self.medications,
+            self.symptoms,
+            self.tooth,
+            self.comments,
+            self.employee_user_ssn,
+            self.dentist_user_ssn,
+            self.patient_user_ssn,
+            self.treatment_time
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return Treatment (
+            (row[0]),
+            (row[1]),
+            (row[2]),
+            (row[3]),
+            (row[4]),
+            (row[5]),
+            int(row[6]),
+            int(row[7]),
+            int(row[8]),
+            time.strftime(row[9],'%H:%M:%S'),
+        )
 class PermissionLevel(Enum):
     DENTIST = 0
     DENTIST_PATIENT = 1
