@@ -80,7 +80,7 @@ def authenticate_user(username:str, password:str) -> models.User:
     print("[LOG] Authenticating User with db.")
     try:
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"User\" WHERE email_address like %s AND password LIKE %s", (username, password))
+            cursor.execute("SELECT * FROM public.\"User\" WHERE email_address like %s AND password LIKE %s", (username, password))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique
