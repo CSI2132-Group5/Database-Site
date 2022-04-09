@@ -13,14 +13,18 @@ db = psycopg2.connect(
     port=config.POSTGRESQL_PORT
 )
 
-def fetch_users() -> models.User:
+def fetch_users() -> list:
     print("[LOG] Fetching all users from the DB.")
     try: 
         with db.cursor() as cursor:
             cursor.execute("SELECT * FROM public.\"User\"")
             db_response = cursor.fetchall()
             
-            return db_response
+            users = []
+            for row in db_response:
+                users.append(models.User.from_postgres(row))
+
+            return users
             
     except Exception:
         print("[ERROR] Failed to fetch all user accounts.")

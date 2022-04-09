@@ -571,14 +571,18 @@ def view_appointments_page():
 @app.route('/admin/viewuser', methods=["GET", "POST"])
 @login_required
 def view_user_page():
+    users = fetch_users()
+    
     permission = user_permission_level(current_user.ssn)
+    print(permission)
     if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
-        return redirect(url_for('dashboard'))
-        # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
+        for user in users:
+            if user.ssn != current_user.ssn:
+                users.remove(user)
     
     return render_template(
         "users.html", 
-         users=fetch_users()
+         users=users
     )
 
 
