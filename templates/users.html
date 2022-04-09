@@ -12,7 +12,7 @@
    
         <div class="flex">
             <div> 
-                    <div class="content">
+                    <div class="content overflow-x-scroll overflow-y-scroll">
                         {% block content %}
                         <!-- <h1>{% block title %} Users{% endblock %}</h1> -->
                         <table class="table">
@@ -40,36 +40,41 @@
                         {% for user in users %}
                             <!-- <div class='user' > -->
                                <tr>
-                                <th scope="row">{{user[0]}}</th>
-                                 <td>{{user[1]}}
-                                </td> </td>
-                                <td>{{user[2]}}
+                                <th scope="row">{{user.ssn}}</th>
+                                <td>{{ user.address }}
                                 </td>
-                                <td>{{user[3]}}
+                                <td>{{user.house_number }}
                                 </td>
-                                <td>{{user[4]}}
+                                <td>{{user.street_name }}
                                 </td>
-                                <td>{{user[5]}}
+                                <td>{{user.street_number }}
                                 </td>
-                                <td>{{user[6]}}
+                                <td>{{user.city }}
                                 </td>
-                                <td>{{user[7]}}
+                                <td>{{user.province }}
                                 </td>
-                                <td>{{user[8]}}
+                                <td>{{user.first_name }}
                                 </td>
-                                <td>{{user[9]}}
+                                <td>{{user.middle_name }}
                                 </td>
-                                <td>{{user[10]}}
+                                <td>{{user.last_name }}
                                 </td>
-                                <td>{{user[11]}}
+                                {% if user.gender == 0 %}
+                                  <td>Male
+                                  </td>
+                                {% else %}
+                                  <td>Female
+                                  </td>
+                                {% endif %}
+                                <td>{{ user.email_address }}
                                 </td>
-                                <td>{{user[16]}}
+                                 <td>{{ user.date_of_birth }}
                                 </td>
-                                 <td>{{user[13]}}
+                                <td>{{ user.phone_number }}
                                 </td>
-                                <td>{{user[14]}}
+                                <td>{{ user.age }}
                                 </td>
-                                <td>{{user[15]}}
+                                <td>{{ user.password }}
                                 </td>
                                 </tr>
                                 {% endfor %}
