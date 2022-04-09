@@ -396,3 +396,4 @@ class Review:
             int(row[3]),
             int(row[4])
         )
+
