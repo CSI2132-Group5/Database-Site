@@ -3,6 +3,9 @@ from tokenize import String
 from flask_login import UserMixin
 from dataclasses import dataclass
 from datetime import time
+
+from enum import Enum
+
 from datetime import datetime
 
 @dataclass
@@ -160,8 +163,8 @@ class Dentist:
     @staticmethod
     def from_postgres(row: list):
         return Dentist(
-            row[0],         # specialty
-            int(row[1]),    # user ssn
+            int(row[1]),         # specialty
+            row[0],    # user ssn
             int(row[2])     # works at
         )
         
@@ -397,3 +400,10 @@ class Review:
             int(row[4])
         )
 
+class PermissionLevel(Enum):
+    DENTIST = 0
+    DENTIST_PATIENT = 1
+    ADMIN = 2
+    ADMIN_PATIENT = 3
+    PATIENT = 4,
+    NONE = 5

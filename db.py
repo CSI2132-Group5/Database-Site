@@ -484,15 +484,15 @@ def fetch_branch_id(id:string) -> models.Branch:
         print("[ERROR] Failed to fetch Branch id.")
         print(traceback.format_exc())
         return False
-
-def fetch_branches()->models.Branch:
+        
+def fetch_branches() -> models.Branch:
     print("[LOG] Fetching all branches from the DB.")
     try: 
         with db.cursor() as cursor:
             cursor.execute("SELECT * FROM \"Branch\"")
             db_response = cursor.fetchall()
-            
             return db_response
+
     except Exception:
         print("[ERROR] Failed to fetch all branches.")
         print(traceback.format_exc())
