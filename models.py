@@ -2,7 +2,10 @@ from cgitb import text
 from tokenize import String
 from flask_login import UserMixin
 from dataclasses import dataclass
+from datetime import time
+
 from enum import Enum
+
 from datetime import datetime
 
 @dataclass
@@ -202,38 +205,25 @@ class Branch:
            self.street_number,
            self.city,
            self.province,
+           self.id,
            self.opening_time,
-           self.closing_time,
-           self.id
-        )
-    @staticmethod
-    def from_postgres(row: list):
-        return Branch(
-            row[0],
-            row[1],
-            row[2],
-            row[3],
-            row[4],
-            row[5],
-            row[6],
-            row[7],
-            int(row[8])
+           self.closing_time
         )
 
     @staticmethod
     def from_postgres(row: list):
         return Branch(
-            row[0],
-            row[1],
-            row[2],
+            (row[0]),
+            (row[1]),
+            (row[2]),
             int(row[3]),
-            row[4],
-            row[5],
-            row[6],
-            row[7],
-            row[8]
-        )
-
+            (row[4]),
+            (row[5]),
+            int(row[6]),
+            time.strftime(row[7],'%H:%M:%S'),
+            time.strftime(row[8],'%H:%M:%S'),
+            
+        ) 
 @dataclass
 class Appointment:
    id: int
@@ -257,6 +247,21 @@ class Appointment:
            self.appointment_patient,
            self.appointment_dentist
        )
+    
+   @staticmethod
+   def from_postgres(row: list):
+        return Appointment(
+            int(row[0]),
+            int(row[1]),
+            int(row[2]),
+            int(row[3]),
+            int(row[4]),
+            int(row[5]),
+            int(row[6]),
+            int(row[7]),
+            int(row[8])
+        ) 
+
 @dataclass
 class AppointmentProcedure: 
   procedure_code: int
@@ -276,6 +281,18 @@ class AppointmentProcedure:
            self.id,
            self.procedure_category,
        )
+  
+  @staticmethod
+  def from_postgres(row:list):
+     return AppointmentProcedure( 
+      int(row[0]),
+      int(row[1]),
+      int(row[2]),
+      (row[3]),
+      int(row[4]),
+      int(row[5]),
+      (row[6])
+     )
 
 @dataclass
 class DentalAppliance:
@@ -286,6 +303,13 @@ class DentalAppliance:
            self.id,
            self.type
        )
+  
+  @staticmethod
+  def from_postgres(row:list):
+     return DentalAppliance( 
+      int(row[0]),
+      (row[1])
+     )
 
 @dataclass
 class ProcedureCategory:
@@ -298,6 +322,14 @@ class ProcedureCategory:
            self.description,
            self.category_id
        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return ProcedureCategory (
+            (row[0]),
+            (row[1]),
+            int(row[2])
+        )
 
 @dataclass
 class Invoice:
@@ -316,6 +348,17 @@ class Invoice:
        self.id,
        self.receptionist_ssn
        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return Invoice (
+            datetime.strftime(row[0], "%Y-%m-%d") if row[0] != None else None,
+            float(row[1]),
+            int(row[2]),
+            int(row[3]),
+            int(row[4]),
+            int(row[5])
+        )
 
 class ResponsibleParty:
     user_ssn: int
@@ -324,6 +367,13 @@ class ResponsibleParty:
         return (
             self.user_ssn,
             self.responsible_for
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return ResponsibleParty (
+            int(row[0]),
+            int(row[1])
         )
 @dataclass
 class Review:
@@ -334,11 +384,21 @@ class Review:
     user_ssn: int
     def to_tuple(self):
         return (
-            self.user_ssn,
-            self.value,
-            self.cleanliness,
+            self.employee_professionalism,
             self.communication,
-            self.employee_professionalism
+            self.cleanliness,
+            self.value,
+            self.user_ssn
+        )
+    
+    @staticmethod
+    def from_postgres(row: list):
+        return Review (
+            int(row[0]),
+            int(row[1]),
+            int(row[2]),
+            int(row[3]),
+            int(row[4])
         )
 
 class PermissionLevel(Enum):
