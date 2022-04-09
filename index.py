@@ -503,7 +503,7 @@ def create_appointment_page():
     else:
         return render_template("createappointment.html")
 
-@app.route('/admin/viewuser', methods=["GET", "POST"])
+@app.route('/admin/viewusers', methods=["GET", "POST"])
 @login_required
 def view_user_page():
     
