@@ -610,7 +610,7 @@ def fetch_appointment_id(id:int) -> models.Appointment:
     try:
         
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM \"AppointmentProcedure\" WHERE \"id\"=%s", (id, ))
+            cursor.execute("SELECT * FROM \"Appointment\" WHERE \"id\"=%s", (id, ))
             db_response = cursor.fetchall()
             
             # this would imply either the ssn does not exist in the postgres or the unique

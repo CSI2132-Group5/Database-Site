@@ -251,6 +251,7 @@ class Appointment:
     
    @staticmethod
    def from_postgres(row: list):
+        print(row)
         return Appointment(
             int(row[0]),
             int(row[1]),

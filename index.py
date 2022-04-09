@@ -20,6 +20,7 @@ from db import (
     authenticate_user,
     create_appointment,
     create_appointment_procedure,
+    fetch_appointment_id,
     fetch_branch,
     fetch_dentist, 
     fetch_user, 
@@ -596,7 +597,6 @@ def view_appointments_page():
 @login_required
 def view_user_page():
     permission = user_permission_level(current_user.ssn)
-    print(permission)
     if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
         return render_template(
             "users.html",
@@ -703,13 +703,34 @@ def view_branches_page():
         "branches.html", 
          branches=fetch_branches()
     )
+
 @app.route('/dentist/viewprocedures', methods=["GET", "POST"])
 @login_required
 def view_procedure_page():
+    procedures = fetch_appointment_procedures()
     
+    # if the user is not an admin, they should only be able to see procedures they have been involved in
+    # ~ this preserves data privacy for each patient
+    permission = user_permission_level(current_user.ssn)
+    if not ((permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT)):
+        procedures_with_client = []
+        for procedure in procedures:
+            appointment = fetch_appointment_id(procedure[4])  # procedure[5] is the appointment_id in postgres
+            # if a procedure has been found involving the patient add it to a new list of procedures we will return
+            # after the for loop check is over
+            if appointment.appointment_patient == current_user.ssn:
+                procedures_with_client.append(procedure)
+        
+        # return a list of procedures the client is involved with
+        return render_template(
+            "viewprocedures.html", 
+            procedures=procedures_with_client
+        )
+    
+    # user is an admin ~ display ALL records they can control
     return render_template(
         "viewprocedures.html", 
-         procedures=fetch_appointment_procedures()
+         procedures=procedures
     )
 
 
