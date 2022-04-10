@@ -463,8 +463,37 @@ class Treatment:
             int(row[6]),
             int(row[7]),
             int(row[8]),
-            time.strftime(row[9],'%H:%M:%S'),
+            time.strftime(row[9],'%Y-%m-%d%H:%M:%S'),
         )
+
+@dataclass
+class PatientChart:
+    dosage: int
+    status: str
+    time: datetime
+    patient_ssn: int
+    dentist_ssn: int
+    employee_ssn: int
+    def to_tuple(self):
+        return (
+            self.dosage,
+            self.status,
+            self.time,
+            self.patient_ssn,
+            self.dentist_ssn,
+            self.employee_ssn,
+        )
+    @staticmethod
+    def from_postgres(row: list):
+        return PatientChart (
+            int(row[0]),
+            (row[1]),
+            time.strftime(row[2],'%Y-%m-%d%H:%M:%S'),
+            int(row[3]),
+            int(row[4]),
+            int(row[5])
+        )
+
 class PermissionLevel(Enum):
     DENTIST = 0
     DENTIST_PATIENT = 1
@@ -472,3 +501,4 @@ class PermissionLevel(Enum):
     ADMIN_PATIENT = 3
     PATIENT = 4,
     NONE = 5
+

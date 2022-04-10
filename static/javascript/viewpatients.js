@@ -93,6 +93,18 @@ $(document).ready(function(){
                 var idname = 'txtmiddlename';
             } else if (i=='9') {
                 var idname = 'txtlastname';
+            } else if (i=='10') {
+                var idname = 'txtgender'
+            } else if (i=='11'){
+                var idname = 'txtemailaddress'
+            }else if (i=='12'){
+                var idname = 'txtdateofbirth'
+            } else if (i =='13'){
+                var idname = 'txtphonenumber'
+            } else if (i =='14'){
+                var idname = 'txtage'
+            } else if (i == '15'){
+                var idname = 'txtpassword'
             }else{} 
             $(this).html('<input type="text" name="updaterec" id="' + idname + '" class="form-control" value="' + $(this).text() + '">');
         });  

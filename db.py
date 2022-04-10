@@ -50,12 +50,19 @@ def fetch_user(ssn:int) -> models.User:
         print("[ERROR] Failed to fetch user account.")
         print(traceback.format_exc())
 
-def create_patient_chart():
+def create_patient_chart(patientchart: models.PatientChart)->bool:
+    print("[LOG] Creating patient chart in the DB")
     try:
       with db.cursor() as cursor:
-          query = """INSERT INTO "PatientChart" (dosage,status,time) VALUES();"""
-          cursor.execute(query)
+          employee_existence_check = fetch_user(patientchart.employee_ssn)
+          dentist_existence_check = fetch_dentist(patientchart.dentist_ssn)
+          patient_existence_check = fetch_patient(patientchart.patient_ssn)
+          if employee_existence_check is None or dentist_existence_check is None or patient_existence_check is None:
+            return False
+          query = """INSERT INTO "PatientChart" (dosage,status,time,patient_ssn,dentist_ssn,employee_ssn) VALUES (%s,%s,%s,%s,%s,%s);"""
+          cursor.execute(query,patientchart.to_tuple())
           db.commit()
+          return True
     except Exception:
         print("[ERROR] Failed to insert patient chart into the database.")
         print(traceback.format_exc())
@@ -288,7 +295,7 @@ def create_dentist(dentist: models.Dentist) -> bool:
             branch_id_existence_check = fetch_branch_id(dentist.works_at)
             emp_existence_check = fetch_employee(dentist.user_ssn)
             dentist_existence_check = fetch_dentist(dentist.user_ssn)
-            if branch_id_existence_check is not None or dentist_existence_check is not None or emp_existence_check is None:
+            if branch_id_existence_check is None or dentist_existence_check is not None or emp_existence_check is None:
                 return False
             
             query = """INSERT INTO "Dentist" (specialty,user_ssn,works_at) VALUES (%s,%s,%s);"""
@@ -1049,7 +1056,61 @@ if __name__ == "__main__":
         id = 4, 
         procedure_category = "wisdom teeth"
     )
-  
+    procedure_category3 = models.ProcedureCategory (
+        category_name= "teeth whitening",
+        description= "N/A",
+        category_id = 0
+    )
+    procedure_category4 = models.ProcedureCategory (
+        category_name="teeth cleaning",
+        description ="N/A",
+        category_id =0
+    )
+    procedure_category5 = models.ProcedureCategory (
+        category_name="extraction",
+        description ="N/A",
+        category_id =0
+    )
+    procedure_category6 = models.ProcedureCategory (
+        category_name="Veneers",
+        description ="N/A",
+        category_id =0
+    )
+    procedure_category7 = models.ProcedureCategory (
+        category_name="Fillings",
+        description ="N/A",
+        category_id =0
+    )
+    procedure_category8 = models.ProcedureCategory (
+        category_name="Braces/Invisalign",
+        description ="N/A",
+        category_id =0
+    )
+    procedure_category9 = models.ProcedureCategory (
+        category_name="Dentures",
+        description ="N/A",
+        category_id =0
+    )
+    patientchart1 = models.PatientChart (
+        dosage =10,
+        status="admitted",
+        time="2021-04-09 06:39:39",
+        patient_ssn=1430,
+        dentist_ssn=1233,
+        employee_ssn=1234
+    )
+    """  treatment = models.Treatment(
+        appointment_type="",
+        treatment_type=,
+        medications=,
+        symptoms=,
+        tooth=,
+        comments = ,
+        employee_user_ssn=,
+        dentist_user_ssn=,
+        patient_user_ssn=,
+        treatment_time=
+    ) """
     #create_user(user)
     #create_user(user2)
    # create_user(user3)
@@ -1082,4 +1143,13 @@ if __name__ == "__main__":
     print(fetch_users())
     create_appointment(appointment)
     create_procedure_category(procedure_category2)
+    create_procedure_category(procedure_category3)
+    create_procedure_category(procedure_category4)
+    create_procedure_category(procedure_category5)
+    create_procedure_category(procedure_category6)
+    create_procedure_category(procedure_category7)
+    create_procedure_category(procedure_category8)
+    create_procedure_category(procedure_category9)
     create_appointment_procedure(procedure1)
+    #create_patient_chart(patientchart1)
+    print(fetch_users())
