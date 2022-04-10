@@ -205,31 +205,36 @@ def create_user_page():
         is_dentist = False
         is_admin = False
         is_manager = False   
+        print(request.form)
         # an admin cannot be a dentist, and a dentist cannot be an admin
-        if ("is-employee" in request.form):
-            if ("is-dentist" in request.form) and ("works-at" in request.form) and ("specialty" in request.form):
-                is_dentist = True
-                works_at = request.form.get("works-at")
-                role = request.form.get("role")
-                type = request.form.get("type")
-                salary = request.form.get("salary")
-                shift_start = request.form.get("shift-start")
-                shift_end = request.form.get("shift-end")
-                specialty = request.form.get("specialty")
+        if ("is-employee" in request.form) and (request.form["is-employee"] == 1):
+            if ("is-dentist" in request.form) and (request.form["is-dentist"] == 1):
+                if ("works-at" in request.form) and ("specialty" in request.form):
+                    is_dentist = True
+                    works_at = request.form.get("works-at")
+                    role = request.form.get("role")
+                    type = request.form.get("type")
+                    salary = request.form.get("salary")
+                    shift_start = request.form.get("shift-start")
+                    shift_end = request.form.get("shift-end")
+                    specialty = request.form.get("specialty")
+                else:
+                    invalid_role = True
             
-            if (not is_dentist) and ("is-admin" in request.form) and ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
-                is_admin = True
-                works_at = request.form.get("works-at")
-                role = request.form.get("role")
-                type = request.form.get("type")
-                salary = request.form.get("salary")
-                shift_start = request.form.get("shift-start")
-                shift_end = request.form.get("shift-end")
+            if (not is_dentist) and ("is-admin" in request.form) and (request.form["is-admin"] == 1):
+                if ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
+                    is_admin = True
+                    works_at = request.form.get("works-at")
+                    role = request.form.get("role")
+                    type = request.form.get("type")
+                    salary = request.form.get("salary")
+                    shift_start = request.form.get("shift-start")
+                    shift_end = request.form.get("shift-end")
             else:
                 invalid_role = True
         
             # a branch manager must be either an admin or a dentist
-            if ("is-manager" in request.form) and (is_admin or is_dentist):
+            if ("is-manager" in request.form) and (request.form["is-manager"] == 1) and (is_admin or is_dentist):
                 is_manager = True   
                 manages = works_at
             else:
