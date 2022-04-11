@@ -698,6 +698,10 @@ def create_branch_page():
                 previous_form=request.form
             )
     else:
+        permission = user_permission_level(current_user.ssn) # only those who have solely patient permission level or none permission level are unable to reach this page
+        if not ((permission == models.PermissionLevel.MANAGER) or (permission == models.PermissionLevel.DENTIST) or (permission == models.PermissionLevel.ADMIN) or (permission == models.PermissionLevel.ADMIN_PATIENT) or (permission == models.PermissionLevel.DENTIST_PATIENT)):
+            return redirect(url_for('dashboard'))
+            # TODO - TELL THE USER THEY DON'T HAVE PERMISSION
         return render_template("createbranch.html")
     
 @app.route('/admin/viewbranches', methods=["GET", "POST"])

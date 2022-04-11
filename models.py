@@ -471,4 +471,5 @@ class PermissionLevel(Enum):
     ADMIN = 2
     ADMIN_PATIENT = 3
     PATIENT = 4,
-    NONE = 5
+    NONE = 5,
+    MANAGER=6,
