@@ -48,6 +48,7 @@ def user_permission_level(ssn: int) -> PermissionLevel:
             # if the user is not a dentist, not a branch manager, and not an admin, but
             # they exist within the system as a user, they MUST
             # be a patient ONLY
-            permission_level = PermissionLevel.PATIENT
+            if manager==None: #manager check exists outside this if/else statement, so make sure it's not already manager
+                permission_level = PermissionLevel.PATIENT
     
     return permission_level
