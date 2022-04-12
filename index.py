@@ -207,16 +207,23 @@ def create_user_page():
         is_manager = False   
         print(request.form)
         # an admin cannot be a dentist, and a dentist cannot be an admin
-        if ("is-employee" in request.form) and (request.form["is-employee"] == 1):
-            if ("is-dentist" in request.form) and (request.form["is-dentist"] == 1):
-                if ("works-at" in request.form) and ("specialty" in request.form):
+        print("employee in form is "+str("is-employee" in request.form))
+        #print("employee being 1 is " + str(request.form["is-employee"] == 1))
+        print("dentist is "+str("is-dentist" in request.form))
+        
+        if ("is-employee" in request.form):
+            print("is employee is in form")
+            if ("is-dentist" in request.form):
+                print("is dentist is in form")
+                if ("works-at" in request.form) and ("specialty" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
+                    print (("works-at" in request.form) and ("specialty" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form))
                     is_dentist = True
-                    works_at = request.form.get("works-at")
+                    works_at = int(request.form.get("works-at"))
                     role = request.form.get("role")
                     type = request.form.get("type")
-                    salary = request.form.get("salary")
-                    shift_start = request.form.get("shift-start")
-                    shift_end = request.form.get("shift-end")
+                    salary = int(request.form.get("salary"))
+                    shift_start = int(request.form.get("shift-start"))
+                    shift_end = int(request.form.get("shift-end"))
                     specialty = request.form.get("specialty")
                 else:
                     invalid_role = True
@@ -224,12 +231,12 @@ def create_user_page():
             if (not is_dentist) and ("is-admin" in request.form) and (request.form["is-admin"] == 1):
                 if ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
                     is_admin = True
-                    works_at = request.form.get("works-at")
+                    works_at = int(request.form.get("works-at"))
                     role = request.form.get("role")
                     type = request.form.get("type")
-                    salary = request.form.get("salary")
-                    shift_start = request.form.get("shift-start")
-                    shift_end = request.form.get("shift-end")
+                    salary = int(request.form.get("salary"))
+                    shift_start = int(request.form.get("shift-start"))
+                    shift_end = int(request.form.get("shift-end"))
             else:
                 invalid_role = True
         
@@ -277,32 +284,35 @@ def create_user_page():
             dateofbirth=date_of_birth
         )
         )
+        print("Is dentist" +str(is_dentist))
         if is_admin or is_dentist or is_manager:
+           print("Is dentist" +str(is_dentist))
            create_employee(models.Employee(
-               user_ssn=ssn,
-               role=role,
-               type=type,
-               salary=salary,
-               shift_start=shift_start,
-               shift_end=shift_end
-           ))
+              role=role,
+              type=type,
+              salary=salary,
+              shift_start=shift_start,
+              shift_end=shift_end,
+              user_ssn=ssn
+           )
+           )
         if is_admin:
             create_admin(models.Admin(
-               user_ssn=ssn,
-               works_at=works_at 
+              user_ssn=ssn,
+              works_at=works_at 
             )
             )
         if is_dentist:
             create_dentist(models.Dentist (
-               specialty=specialty,
-               user_ssn=ssn,
-               works_at=works_at
+              user_ssn=ssn,
+              specialty=specialty,
+              works_at=works_at
             )
             )
         if is_manager:
             create_branch_manager(models.BranchManager(
-               manages=manages,
-               user_ssn=ssn
+              manages=manages,
+              user_ssn=ssn
             )
             )
         if is_patient:

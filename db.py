@@ -70,7 +70,6 @@ def fetch_patient_records():
 
         if (not db_response) or (len(db_response) != 1):
                 return  # user does not exist
-        print(db_response)
         return models.PatientChart.from_postgres(db_response[0])
     except Exception:
         print("[ERROR] Failed to fetch patient charts.")
@@ -150,7 +149,8 @@ def create_employee(employee: models.Employee) -> bool:
             #     -> as insert is expensive because of the class to tuple conversion
             existence_check = fetch_user(user.ssn)
             emp_existence_check = fetch_employee(employee.user_ssn)
-            if emp_existence_check is not None or existence_check is not None:
+            if emp_existence_check is not None or existence_check is None:
+
                 return False
             
             query = """INSERT INTO "Employee" (role,type,salary,shift_start,shift_end,user_ssn) VALUES (%s,%s,%s,%s,%s,%s);"""
@@ -176,7 +176,7 @@ def fetch_employee(user_ssn:int) -> models.Employee:
             # key constaints in the database has broken causing duplicate columns
             if (not db_response) or (len(db_response) != 1):
                 return  # user does not exist
-            
+            print("FETCH EMPLOYEE" +db_response[0])
             return models.Employee.from_postgres(db_response[0])
     except Exception:
         print("[ERROR] Failed to fetch employee account.")
@@ -288,7 +288,7 @@ def create_dentist(dentist: models.Dentist) -> bool:
             branch_id_existence_check = fetch_branch_id(dentist.works_at)
             emp_existence_check = fetch_employee(dentist.user_ssn)
             dentist_existence_check = fetch_dentist(dentist.user_ssn)
-            if branch_id_existence_check is not None or dentist_existence_check is not None or emp_existence_check is None:
+            if branch_id_existence_check is None or dentist_existence_check is not None or emp_existence_check is None:
                 return False
             
             query = """INSERT INTO "Dentist" (specialty,user_ssn,works_at) VALUES (%s,%s,%s);"""
@@ -959,7 +959,7 @@ if __name__ == "__main__":
         dateofbirth= "2001-01-01"
     )
     dentist1 = models.Dentist(
-        user_ssn=1990,
+        user_ssn=999999999,
         specialty="Surgeon",
         works_at=0
     )
@@ -969,7 +969,7 @@ if __name__ == "__main__":
         salary=80000,
         shift_start=9,
         shift_end=18,
-        user_ssn= 7547
+        user_ssn= 999999999
     )
     branch = models.Branch (
         name="Res",
@@ -1066,7 +1066,7 @@ if __name__ == "__main__":
     #create_dentist(dentist1)
     #delete_user(user3)
     create_branch(branch)
-    print(fetch_branch_id(0))
+    #print(fetch_branch_id(0))
     create_review(review1)
     #create_appointment(appointment)
     #delete_appointment(appointment)
@@ -1076,10 +1076,12 @@ if __name__ == "__main__":
     #create_procedure_category(procedure_category1)
     #create_appointment_procedure(appointmentProcedure)
     update_user(user2,patient1)
-    print(fetch_appointment_procedures())
-    print(fetch_appointments())
-    print(fetch_branches())
-    print(fetch_users())
+    #print(fetch_appointment_procedures())
+    #print(fetch_appointments())
+    #print(fetch_branches())
+    #print(fetch_users())
     create_appointment(appointment)
     create_procedure_category(procedure_category2)
     create_appointment_procedure(procedure1)
+    create_employee(employee1)
+    create_dentist(dentist1)

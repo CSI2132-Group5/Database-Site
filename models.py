@@ -104,13 +104,14 @@ class Employee:
     @staticmethod
     def from_postgres(row: list):
         return Employee(
-            int(row[5]),    # user_ssn
             row[0],         # role
             row[1],         # type 
             int(row[2]),    # salary
             int(row[3]),    # shift_start      
-            int(row[4])     # shift_end
+            int(row[4]),     # shift_end
+            int(row[5])   # user_ssn
         )
+    
 
 @dataclass
 class Patient:
