@@ -207,8 +207,8 @@ def create_user_page():
         is_manager = False   
         print(request.form)
         # an admin cannot be a dentist, and a dentist cannot be an admin
-        if ("is-employee" in request.form) and (request.form["is-employee"] == 1):
-            if ("is-dentist" in request.form) and (request.form["is-dentist"] == 1):
+        if ("is-employee" in request.form) and (request.form["is-employee"] == "on"):
+            if ("is-dentist" in request.form) and (request.form["is-dentist"] == "on"):
                 if ("works-at" in request.form) and ("specialty" in request.form):
                     is_dentist = True
                     works_at = request.form.get("works-at")
@@ -221,7 +221,7 @@ def create_user_page():
                 else:
                     invalid_role = True
             
-            if (not is_dentist) and ("is-admin" in request.form) and (request.form["is-admin"] == 1):
+            if (not is_dentist) and ("is-admin" in request.form) and (request.form["is-admin"] == "on"):
                 if ("works-at" in request.form) and ("role" in request.form) and ("type" in request.form) and ("salary" in request.form) and ("shift-start" in request.form) and ("shift-end" in request.form):
                     is_admin = True
                     works_at = request.form.get("works-at")
@@ -234,7 +234,7 @@ def create_user_page():
                 invalid_role = True
         
             # a branch manager must be either an admin or a dentist
-            if ("is-manager" in request.form) and (request.form["is-manager"] == 1) and (is_admin or is_dentist):
+            if ("is-manager" in request.form) and (request.form["is-manager"] == "on") and (is_admin or is_dentist):
                 is_manager = True   
                 manages = works_at
             else:
