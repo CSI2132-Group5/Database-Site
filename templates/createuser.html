@@ -152,18 +152,23 @@
                         </div>
                     {% endif %}
                     <h5 class="font-light mb-2">User Permissions</h5>
-                    <input type="checkbox" id="is-patient" name="is-patient" value="1">
+                    <input type="hidden" name="is-patient" value="off"/>
+                    <input type="checkbox" id="is-patient" name="is-patient">
                     <label for="is-patient">Patient</label><br>
                     
-                    <input type="checkbox" id="is-employee" name="is-employee" value="1">
+                    <input type="hidden" name="is-employee" value="off"/>
+                    <input type="checkbox" id="is-employee" name="is-employee">
                     <label for="is-employee">Employee</label><br>
         
                     <div id = "employeetype-data" class="m1 hidden">
-                    <input type="checkbox" id="is-dentist" name="is-dentist" value="1">
+                    <input type="hidden" name="is-dentist" value="off"/>
+                    <input type="checkbox" id="is-dentist" name="is-dentist">
                     <label for="is-dentist">Dentist</label><br>
-                    <input type="checkbox" id="is-admin" name="is-admin" value="1">
+                    <input type="hidden" name="is-admin" value="off"/>
+                    <input type="checkbox" id="is-admin" name="is-admin">
                     <label for="is-admin">Admin</label><br>
-                    <input type="checkbox" id="is-manager" name="is-manager" value="1">
+                    <input type="hidden" name="is-manager" value="off"/>
+                    <input type="checkbox" id="is-manager" name="is-manager">
                     <label for="is-manager">Branch Manager</label><br>
                    </div>
                 </div>
