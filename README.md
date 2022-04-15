@@ -37,4 +37,4 @@ Install the requirements for the project like Flask, psycopg2-binary, flask_logi
 After these prerequisites are done, run command “python3 index.py”. 
 
 After that, the link to view the project will be displayed in the terminal, http://127.0.0.1:5000/,  and the project website can be viewed in any browser. 
-![image](https://user-images.githubusercontent.com/55165117/163591993-a9b8510e-7d9b-452e-9a61-b0e8b4a53e2a.png)
+
