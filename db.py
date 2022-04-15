@@ -337,6 +337,19 @@ def delete_dentist(dentist: models.Dentist)->bool:
         print("[ERROR] Failed to delete dentist from the database.")
         print(traceback.format_exc())
         return False
+def fetch_dentists_branch():
+    print("[LOG] Fetching dentists in each branch from the db.")
+    try:
+        
+        with db.cursor() as cursor:
+            cursor.execute(" SELECT \"Branch\".name, public.\"User\".first_name,public.\"User\".last_name FROM \"Dentist\" INNER JOIN \"Branch\" ON \"Branch\".id=\"Dentist\".works_at JOIN public.\"User\" ON \"User\".\"SSN\" = \"Dentist\".user_ssn ORDER BY works_at")
+            db_response = cursor.fetchall()
+            
+            return db_response
+    except Exception:
+        print("[ERROR] Failed to fetch dentists in each branch.")
+        print(traceback.format_exc())
+        return None
 
 ###################################
 
@@ -1083,3 +1096,4 @@ if __name__ == "__main__":
     create_appointment(appointment)
     create_procedure_category(procedure_category2)
     create_appointment_procedure(procedure1)
+    print(fetch_dentists_branch())
