@@ -36,7 +36,8 @@ from db import (
     create_branch,
     fetch_branches,
     fetch_appointment_procedures,
-    fetch_branch_id
+    fetch_branch_id,
+    fetch_dentists_branch
 )
 
 from utils import user_permission_level
@@ -712,7 +713,14 @@ def view_branches_page():
         "branches.html", 
          branches=fetch_branches()
     )
-
+@app.route('/admin/viewdentists', methods=["GET", "POST"])
+@login_required
+def view_dentists_page():
+    
+    return render_template(
+        "dentists.html", 
+         dentists=fetch_dentists_branch()
+    )
 @app.route('/dentist/viewprocedures', methods=["GET", "POST"])
 @login_required
 def view_procedure_page():
@@ -741,6 +749,7 @@ def view_procedure_page():
         "viewprocedures.html", 
          procedures=procedures
     )
+
 
 
 if __name__ == "__main__":
